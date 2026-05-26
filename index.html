@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>Eisen & Wille — Trainingsplan</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<style>
+  /* ================= RESET & BASE ================= */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #141414;
+    --bg-card: #181818;
+    --bg-elev: #1f1f1f;
+    --border: #2a2a2a;
+    --border-strong: #3a3a3a;
+    --text: #f4f1ea;
+    --text-dim: #a8a39a;
+    --text-mute: #6e6960;
+    --accent: #d97757;       /* warmes Terrakotta */
+    --accent-soft: #f3a17d;
+    --success: #7cb342;
+    --warn: #e0a93b;
+    --danger: #c14b4b;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+  }
+  body {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(217,119,87,0.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(217,119,87,0.04), transparent 60%),
+      var(--bg);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+  }
+  /* Display font via system fallback stack to keep offline-only */
+  .display { font-family: 'Georgia', 'Times New Roman', serif; font-weight: 700; letter-spacing: -0.02em; }
+
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea { font-family: inherit; }
+
+  /* ================= LAYOUT ================= */
+  .app { max-width: 540px; margin: 0 auto; padding: 20px 16px 24px; }
+
+  /* ================= HEADER ================= */
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding: 8px 4px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent) 0%, #b15a3d 100%);
+    display: grid; place-items: center;
+    box-shadow: 0 4px 12px rgba(217,119,87,0.3);
+    font-weight: 800; color: #fff;
+    font-family: Georgia, serif; font-size: 18px;
+  }
+  .brand-text { line-height: 1.1; }
+  .brand-text .title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand-text .sub { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .streak {
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 100px;
+    font-size: 12px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .streak strong { color: var(--accent-soft); font-weight: 700; }
+
+  /* ================= SCREENS ================= */
+  .screen { display: none; animation: fadeIn 0.25s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ================= HOME ================= */
+  .hero {
+    background: linear-gradient(135deg, rgba(217,119,87,0.12), rgba(217,119,87,0.02));
+    border: 1px solid rgba(217,119,87,0.2);
+    border-radius: var(--radius);
+    padding: 22px 20px; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,119,87,0.25), transparent 70%);
+  }
+  .hero .label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--accent-soft); margin-bottom: 8px;
+  }
+  .hero h1 { font-size: 28px; line-height: 1.15; margin-bottom: 10px; }
+  .hero .meta { color: var(--text-dim); font-size: 13px; }
+
+  .day-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .day-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .day-card:active { transform: scale(0.98); }
+  .day-card.done {
+    border-color: rgba(124,179,66,0.3);
+    background: linear-gradient(135deg, rgba(124,179,66,0.06), var(--bg-card));
+  }
+  .day-card-info { flex: 1; }
+  .day-card-eyebrow {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--text-mute); margin-bottom: 4px;
+  }
+  .day-card-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .day-card-desc { font-size: 12px; color: var(--text-dim); }
+  .day-card-action {
+    background: var(--bg-elev); width: 38px; height: 38px;
+    border-radius: 50%; display: grid; place-items: center;
+    color: var(--accent-soft); font-size: 18px;
+  }
+  .day-card.done .day-card-action {
+    background: rgba(124,179,66,0.15); color: var(--success);
+  }
+
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat {
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 14px 10px; border-radius: var(--radius-sm); text-align: center;
+  }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--accent-soft); font-family: Georgia, serif; }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-mute); margin-top: 4px; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: 24px 0 12px; padding: 0 4px;
+  }
+  .section-head h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-mute); font-weight: 600; }
+  .section-head .link { font-size: 12px; color: var(--accent-soft); }
+
+  /* ================= WORKOUT SCREEN ================= */
+  .back-bar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px; padding: 4px;
+  }
+  .back-btn {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    display: grid; place-items: center; font-size: 18px;
+  }
+  .back-bar h2 { font-size: 18px; font-weight: 600; flex: 1; }
+
+  .workout-intro {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 16px;
+    font-size: 13px; color: var(--text-dim); line-height: 1.5;
+  }
+  .workout-intro strong { color: var(--text); }
+
+  .exercise {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .exercise-head {
+    padding: 16px 16px 12px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .exercise-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(217,119,87,0.15); color: var(--accent-soft);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+    font-family: Georgia, serif;
+  }
+  .exercise-title-wrap { flex: 1; min-width: 0; }
+  .exercise-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+  .exercise-target { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; }
+  .info-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg-elev); display: grid; place-items: center;
+    color: var(--text-dim); font-size: 14px; flex-shrink: 0;
+  }
+
+  .exercise-prescription {
+    padding: 0 16px 12px; padding-left: 56px;
+    font-size: 13px; color: var(--text-dim);
+  }
+  .prescription-pill {
+    display: inline-block; background: var(--bg-elev);
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; color: var(--accent-soft);
+    margin-right: 6px; margin-bottom: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .sets-container {
+    padding: 8px 16px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .set-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 36px;
+    gap: 8px; align-items: center;
+    padding: 8px 0;
+  }
+  .set-label {
+    font-size: 11px; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    text-align: center; font-weight: 600;
+  }
+  .set-input {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 10px;
+    font-size: 14px; color: var(--text); width: 100%;
+    text-align: center;
+    -moz-appearance: textfield;
+  }
+  .set-input::-webkit-outer-spin-button,
+  .set-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .set-input::placeholder { color: var(--text-mute); }
+  .set-input:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--bg);
+  }
+
+  .set-check {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    display: grid; place-items: center;
+    transition: all 0.15s ease;
+  }
+  .set-check.checked {
+    background: var(--success); border-color: var(--success);
+    color: #0a0a0a;
+  }
+  .set-check svg { width: 16px; height: 16px; opacity: 0; transition: opacity 0.15s; }
+  .set-check.checked svg { opacity: 1; }
+
+  .set-header { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 4px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+
+  .progressive-hint {
+    background: rgba(217,119,87,0.06);
+    border: 1px dashed rgba(217,119,87,0.25);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin: 8px 0;
+    font-size: 12px; color: var(--accent-soft);
+    line-height: 1.4;
+  }
+  .progressive-hint strong { color: var(--accent); }
+
+  .finish-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #b15a3d);
+    color: #fff; font-weight: 600; font-size: 15px;
+    padding: 16px; border-radius: var(--radius);
+    margin-top: 8px; letter-spacing: 0.02em;
+    box-shadow: 0 4px 16px rgba(217,119,87,0.3);
+    transition: transform 0.15s;
+  }
+  .finish-btn:active { transform: scale(0.98); }
+  .finish-btn.done {
+    background: var(--success);
+    box-shadow: 0 4px 16px rgba(124,179,66,0.3);
+  }
+
+  /* ================= MODAL ================= */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: none; z-index: 100;
+    padding: 20px;
+    align-items: flex-end;
+  }
+  .modal-backdrop.open { display: flex; animation: fadeIn 0.2s; }
+  .modal {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 540px; margin: 0 auto;
+    max-height: 80vh; overflow-y: auto;
+    padding: 24px 20px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border-strong);
+    border-radius: 2px; margin: 0 auto 16px;
+  }
+  .modal h3 { font-size: 20px; margin-bottom: 4px; }
+  .modal .target-line { font-size: 12px; color: var(--accent-soft); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 16px; }
+  .modal h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-mute); margin: 16px 0 8px; }
+  .modal ol, .modal ul { padding-left: 18px; color: var(--text-dim); font-size: 14px; line-height: 1.6; }
+  .modal ol li, .modal ul li { margin-bottom: 6px; }
+  .modal ol li::marker { color: var(--accent-soft); font-weight: 700; }
+  .modal-close {
+    background: var(--bg-elev); width: 100%;
+    padding: 14px; border-radius: 10px;
+    margin-top: 20px; font-weight: 600;
+  }
+
+  /* ================= BOTTOM NAV ================= */
+  nav.bottom {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+    display: flex; justify-content: space-around;
+    z-index: 50;
+  }
+  .nav-btn {
+    flex: 1; padding: 10px 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: var(--text-mute);
+    transition: color 0.2s;
+  }
+  .nav-btn.active { color: var(--accent-soft); }
+  .nav-btn svg { width: 22px; height: 22px; }
+  .nav-btn span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+  /* ================= PROGRESS SCREEN ================= */
+  .week-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 12px;
+  }
+  .week-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .week-title { font-size: 14px; font-weight: 600; }
+  .week-count { font-size: 12px; color: var(--accent-soft); font-weight: 600; }
+  .week-dots { display: flex; gap: 6px; }
+  .week-dot {
+    flex: 1; height: 8px; border-radius: 100px;
+    background: var(--bg-elev);
+  }
+  .week-dot.done { background: var(--success); }
+
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-mute); font-size: 14px;
+  }
+
+  /* ================= INSTALL PROMPT ================= */
+  .install-banner {
+    background: linear-gradient(135deg, rgba(217,119,87,0.15), rgba(217,119,87,0.05));
+    border: 1px solid rgba(217,119,87,0.3);
+    border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 16px;
+    display: none;
+    align-items: center; gap: 12px;
+    font-size: 13px;
+  }
+  .install-banner.show { display: flex; }
+  .install-banner-text { flex: 1; line-height: 1.4; }
+  .install-banner-text strong { display: block; margin-bottom: 2px; }
+  .install-btn {
+    background: var(--accent); color: #fff;
+    padding: 8px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .install-close { color: var(--text-mute); padding: 0 4px; font-size: 18px; }
+
+  /* ================= UTILITY ================= */
+  .quote {
+    border-left: 2px solid var(--accent);
+    padding: 4px 0 4px 14px;
+    margin: 16px 4px;
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div class="brand-text">
+        <div class="title">Eisen &amp; Wille</div>
+        <div class="sub">Dein Trainingsplan</div>
+      </div>
+    </div>
+    <div class="streak" id="streakBox">
+      🔥 <strong id="streakNum">0</strong> Woche
+    </div>
+  </header>
+
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-text">
+      <strong>Auf dem Handy installieren</strong>
+      Als App speichern für Offline-Nutzung
+    </div>
+    <button class="install-btn" id="installBtn">Installieren</button>
+    <button class="install-close" id="installClose">×</button>
+  </div>
+
+  <!-- =================== HOME SCREEN =================== -->
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="label">Diese Woche · Block 1</div>
+      <h1 class="display">Stark werden,<br/>Schritt für Schritt.</h1>
+      <div class="meta">3 Einheiten · Fokus auf Klimmzug-Progression, Brust, Schulter &amp; Arme</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value" id="statSessions">0</div>
+        <div class="stat-label">Einheiten total</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statWeek">0/3</div>
+        <div class="stat-label">Diese Woche</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statSets">0</div>
+        <div class="stat-label">Sätze gesamt</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>Trainingstage</h2>
+    </div>
+
+    <div class="day-grid" id="dayGrid"></div>
+
+    <div class="quote">
+      „Geduld und Stetigkeit schlagen jede Eile.“ — Bei 51 Jahren ist langsame Steigerung dein größter Vorteil. Lieber sauber als schwer.
+    </div>
+  </section>
+
+  <!-- =================== WORKOUT SCREEN =================== -->
+  <section class="screen" id="screen-workout">
+    <div class="back-bar">
+      <button class="back-btn" onclick="showScreen('home')">‹</button>
+      <h2 id="workoutTitle">Training</h2>
+    </div>
+    <div class="workout-intro" id="workoutIntro"></div>
+    <div id="exerciseList"></div>
+    <button class="finish-btn" id="finishBtn" onclick="finishWorkout()">Training abschließen</button>
+  </section>
+
+  <!-- =================== PROGRESS SCREEN =================== -->
+  <section class="screen" id="screen-progress">
+    <div class="back-bar">
+      <h2>Fortschritt</h2>
+    </div>
+    <div class="stats-row" style="margin-bottom: 20px;">
+      <div class="stat">
+        <div class="stat-value" id="pStatSessions">0</div>
+        <div class="stat-label">Einheiten</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="pStatWeeks">0</div>
+        <div class="stat-label">Wochen</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="pStatStreak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+    </div>
+    <div class="section-head"><h2>Verlauf</h2></div>
+    <div id="weekList"></div>
+  </section>
+
+  <!-- =================== INFO SCREEN =================== -->
+  <section class="screen" id="screen-info">
+    <div class="back-bar">
+      <h2>Hinweise &amp; Plan</h2>
+    </div>
+
+    <div class="workout-intro">
+      <strong>Dein Profil</strong><br/>
+      51 Jahre · 1,92 m · 93 kg · Anfänger/Fortgeschritten<br/>
+      3× Woche · 45–60 Min · Kurzhanteln + Eigengewicht
+    </div>
+
+    <div class="workout-intro">
+      <strong>Plan-Struktur</strong><br/>
+      Du trainierst in einem 3er-Split mit Fokus auf Oberkörper-Push, Oberkörper-Pull (inkl. Klimmzug-Progression) und einem Ganzkörper-Tag mit Beinen &amp; Core. Empfohlene Pause zwischen Sätzen: <strong>90–120 Sekunden</strong>.
+    </div>
+
+    <div class="workout-intro">
+      <strong>Progressive Overload — sicher gesteigert</strong><br/>
+      Erst wenn du <em>alle Sätze</em> einer Übung sauber im oberen Wdh.-Bereich schaffst, erhöhe in der Folgewoche:<br/>
+      • Kurzhantel: +1–2 kg pro Hantel<br/>
+      • Eigengewicht: +1–2 Wdh. pro Satz<br/>
+      • Klimmzug: nächste Progression-Stufe<br/>
+      <strong>Niemals</strong> auf Kosten der Technik. Lieber eine Woche länger auf derselben Stufe.
+    </div>
+
+    <div class="workout-intro">
+      <strong>Aufwärmen (5 Min, jedes Training)</strong><br/>
+      1. 2 Min lockeres Hüpfen / Schultern kreisen<br/>
+      2. 10× Armkreisen vor &amp; zurück<br/>
+      3. 10× Kniebeugen ohne Gewicht<br/>
+      4. 10× „Cat-Cow“ für die Wirbelsäule<br/>
+      5. Eine Aufwärm-Satz mit ~50 % Gewicht pro Hauptübung
+    </div>
+
+    <div class="workout-intro">
+      <strong>Wichtig in deinem Alter</strong><br/>
+      • Mindestens 1 Tag Pause zwischen Trainings<br/>
+      • Bei Schmerzen (nicht nur Brennen): Übung wechseln oder pausieren<br/>
+      • Schulter-Aufwärmen niemals weglassen<br/>
+      • Schlaf &amp; Eiweißzufuhr (ca. 1,6 g/kg KG = ~150 g) sind genauso wichtig wie das Training
+    </div>
+
+    <div class="workout-intro" style="border-color: rgba(192,75,75,0.3); background: rgba(192,75,75,0.05);">
+      <strong style="color: #e08585;">Daten zurücksetzen</strong><br/>
+      Alle deine Trainingsdaten werden lokal auf deinem Gerät gespeichert.<br/>
+      <button onclick="resetAll()" style="margin-top: 10px; background: rgba(192,75,75,0.15); color: #e08585; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid rgba(192,75,75,0.3);">Alle Daten löschen</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- =================== EXERCISE INFO MODAL =================== -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="target-line" id="modalTarget"></div>
+    <h3 id="modalTitle"></h3>
+    <h4>Ausführung</h4>
+    <ol id="modalSteps"></ol>
+    <h4>Wichtig</h4>
+    <ul id="modalTips"></ul>
+    <button class="modal-close" onclick="closeModal()">Verstanden</button>
+  </div>
+</div>
+
+<!-- =================== BOTTOM NAV =================== -->
+<nav class="bottom">
+  <button class="nav-btn active" data-screen="home" onclick="showScreen('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="nav-btn" data-screen="progress" onclick="showScreen('progress')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+    <span>Fortschritt</span>
+  </button>
+  <button class="nav-btn" data-screen="info" onclick="showScreen('info')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span>Plan</span>
+  </button>
+</nav>
+
+<script>
+// ================= TRAININGSPLAN =================
+const PLAN = {
+  1: {
+    name: "Tag 1 — Pull & Klimmzug",
+    short: "Rücken · Bizeps · Klimmzug-Progression",
+    intro: "Heute liegt der Fokus auf dem <strong>Klimmzug-Aufbau</strong>. Du arbeitest dich systematisch nach oben: Aufhängen, Negative, dann assistierte Varianten. Halte bei der Klimmzug-Progression strenge Technik ein.",
+    exercises: [
+      {
+        name: "Dead Hang (Aufhängen)",
+        target: "Griff · Schultern stabilisieren",
+        prescription: ["3 Sätze", "20–40 Sek"],
+        sets: 3,
+        repsLabel: "Sek",
+        weightLabel: "—",
+        hint: "Beginn-Stufe der Klimmzug-Progression. Wenn 3× 40 Sek möglich sind → nächste Woche Negativ-Klimmzüge.",
+        info: {
+          target: "Schultern · Griffkraft · Latissimus",
+          steps: [
+            "Stange im Schulterbreit-Griff fassen, Handflächen nach vorne.",
+            "Vom Boden abdrücken und frei hängen lassen — Arme gestreckt.",
+            "Schultern aktiv nach unten ziehen (nicht hochgezogen).",
+            "Körper ruhig halten, gleichmäßig atmen.",
+            "Nach der vorgegebenen Zeit kontrolliert ablassen."
+          ],
+          tips: [
+            "Die Schultern aktiv nach unten ziehen — nicht passiv 'durchhängen'.",
+            "Bauch leicht anspannen, Beine ruhig.",
+            "Bei Griffermüdung lieber kürzer aber sauber als länger und ausschütteln."
+          ]
+        }
+      },
+      {
+        name: "Negativ-Klimmzüge",
+        target: "Rücken · Bizeps · Klimmzug-Aufbau",
+        prescription: ["3 Sätze", "3–5 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "—",
+        hint: "Springe in die obere Position, lasse dich 5 Sek kontrolliert herunter. Das ist die <strong>wirksamste Methode</strong>, um Klimmzüge zu lernen.",
+        info: {
+          target: "Latissimus · Bizeps · oberer Rücken",
+          steps: [
+            "Auf Stuhl oder Stange stellen, bis Kinn über der Stange ist.",
+            "Stange festgreifen (schulterbreit, Obergriff).",
+            "Füße langsam von der Hilfe lösen — du hängst oben am Kinn.",
+            "5 Sekunden kontrolliert herunterlassen — KEIN Fallen.",
+            "Unten ankommen, wieder hochstellen, nächste Wdh."
+          ],
+          tips: [
+            "Je langsamer das Herunterlassen, desto besser der Trainingseffekt.",
+            "Wenn 3× 5 Wdh mit 5 Sek Negativphase möglich sind → echte Klimmzüge mit Band testen.",
+            "Schultern unten halten — nicht hochziehen lassen."
+          ]
+        }
+      },
+      {
+        name: "Kurzhantel-Rudern (einarmig)",
+        target: "Latissimus · oberer Rücken",
+        prescription: ["3 Sätze", "8–12 Wdh", "je Seite"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Schwere Grundübung für die Rückenmasse. Ellbogen eng am Körper, ziehe zur Hüfte — nicht zur Brust.",
+        info: {
+          target: "Latissimus · Rhomboiden · hinterer Delta",
+          steps: [
+            "Linkes Knie und linke Hand auf eine Bank (oder Stuhl) — Rücken parallel zum Boden.",
+            "Kurzhantel in der rechten Hand, Arm gestreckt nach unten.",
+            "Hantel zur Hüfte ziehen, Ellbogen nah am Körper.",
+            "Oben kurz halten, Schulterblatt nach hinten unten.",
+            "Kontrolliert wieder senken. Alle Wdh., dann Seite wechseln."
+          ],
+          tips: [
+            "Den Rücken IMMER gerade halten — kein Rundrücken.",
+            "Kopf in Verlängerung der Wirbelsäule, nicht hochheben.",
+            "Die Bewegung kommt aus dem Rücken, nicht aus dem Arm."
+          ]
+        }
+      },
+      {
+        name: "Kurzhantel-Curls",
+        target: "Bizeps",
+        prescription: ["3 Sätze", "10–12 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Beide Arme gleichzeitig oder im Wechsel. Ellbogen am Körper fixiert.",
+        info: {
+          target: "Bizeps · Unterarme",
+          steps: [
+            "Aufrecht stehen, Kurzhanteln in den Händen, Handflächen nach vorne.",
+            "Ellbogen eng am Körper, nicht nach vorne wandern lassen.",
+            "Hanteln zu den Schultern führen — kontrolliert.",
+            "Oben kurz anspannen.",
+            "Kontrolliert (2 Sek) wieder ablassen — nicht fallen lassen."
+          ],
+          tips: [
+            "Kein 'Schwingen' aus dem Rumpf.",
+            "Negative Phase ist genauso wichtig wie das Hochheben.",
+            "Wenn du schwingst → Gewicht zu schwer."
+          ]
+        }
+      },
+      {
+        name: "Face Pulls mit Handtuch/Band",
+        target: "hintere Schulter · Haltung",
+        prescription: ["3 Sätze", "15 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "—",
+        hint: "Sehr wichtig für deine Schulter-Gesundheit. Mit Band an Türrahmen oder fest geknotetem Handtuch.",
+        info: {
+          target: "hintere Schultern · Trapez · Rotatoren",
+          steps: [
+            "Band auf Brusthöhe befestigen (Türrahmen, Stange).",
+            "Band an beiden Enden greifen, Schritt zurück bis Spannung da ist.",
+            "Arme nach vorne gestreckt.",
+            "Band zur Stirn ziehen — Ellbogen hoch und nach außen.",
+            "Schulterblätter zusammenführen, 1 Sek halten, kontrolliert zurück."
+          ],
+          tips: [
+            "Diese Übung beugt Schulter-Problemen vor.",
+            "Lieber leichteres Band & saubere Ausführung als zu viel Zug.",
+            "Bewegung kommt aus den Schulterblättern, nicht aus den Armen."
+          ]
+        }
+      }
+    ]
+  },
+  2: {
+    name: "Tag 2 — Push",
+    short: "Brust · Schulter · Trizeps",
+    intro: "Heute drückst du. Achte bei <strong>allen Druckübungen auf Schulterstabilität</strong> — Schulterblätter zusammen und runter, bevor du das Gewicht bewegst.",
+    exercises: [
+      {
+        name: "Kurzhantel-Bankdrücken (Boden oder Bank)",
+        target: "Brust · vordere Schulter",
+        prescription: ["4 Sätze", "8–12 Wdh"],
+        sets: 4,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Kerneinheit für die Brust. Wenn du keine Bank hast, geht es auch auf dem Boden — der schützt zusätzlich die Schultern.",
+        info: {
+          target: "Brustmuskel · vordere Schulter · Trizeps",
+          steps: [
+            "Auf den Rücken legen, Kurzhanteln über der Brust, Arme gestreckt.",
+            "Schulterblätter zusammenziehen und Richtung Hüfte schieben.",
+            "Hanteln kontrolliert seitlich der Brust absenken (2 Sek).",
+            "Am tiefsten Punkt: Ellbogen ca. 45° zum Körper (nicht 90°!).",
+            "Kraftvoll nach oben drücken, oben nicht durchstrecken."
+          ],
+          tips: [
+            "Ellbogen NIE auf 90° zum Körper rausspreizen → Schulterproblem.",
+            "Beim Boden-Drücken Ellbogen am Boden absetzen, kurz halten, hoch.",
+            "Atme beim Absenken ein, beim Drücken aus."
+          ]
+        }
+      },
+      {
+        name: "Liegestütz",
+        target: "Brust · Schulter · Core",
+        prescription: ["3 Sätze", "8–15 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "—",
+        hint: "Falls zu schwer: Hände erhöht (Tisch, Stuhl). Falls zu leicht: Füße erhöht oder langsamere Negativphase (3 Sek runter).",
+        info: {
+          target: "Brust · vordere Schulter · Trizeps · Core",
+          steps: [
+            "Plank-Position, Hände schulterbreit unter den Schultern.",
+            "Körper bildet eine gerade Linie von Kopf bis Fuß.",
+            "Kontrolliert absenken bis Brust knapp über dem Boden (2 Sek).",
+            "Ellbogen ca. 45° zum Körper, nicht weit ausgestellt.",
+            "Kraftvoll nach oben drücken, Bauch & Po angespannt."
+          ],
+          tips: [
+            "Hüfte nicht durchhängen lassen — Core anspannen!",
+            "Lieber 5 saubere als 15 schlampige Wdh.",
+            "Variationen: Hände erhöht (leichter), Füße erhöht (schwerer)."
+          ]
+        }
+      },
+      {
+        name: "Schulterdrücken stehend",
+        target: "Schulter",
+        prescription: ["3 Sätze", "8–12 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Im Stehen besser für die Schulter-Stabilität. Bauch anspannen, kein Hohlkreuz!",
+        info: {
+          target: "vordere & seitliche Schulter · Trizeps",
+          steps: [
+            "Aufrecht stehen, schulterbreit, Knie leicht gebeugt.",
+            "Kurzhanteln auf Schulterhöhe, Handflächen nach vorne.",
+            "Bauch anspannen, Po anspannen — kein Hohlkreuz.",
+            "Hanteln kontrolliert nach oben drücken, leicht zueinander.",
+            "Oben nicht ganz durchstrecken, kontrolliert zurück."
+          ],
+          tips: [
+            "Wenn die Schultern zwicken → Übung pausieren oder Gewicht reduzieren.",
+            "Niemals den Rücken hohl machen, um mehr Gewicht zu schaffen.",
+            "Atmung: beim Hochdrücken ausatmen."
+          ]
+        }
+      },
+      {
+        name: "Seitheben",
+        target: "seitliche Schulter (Breite)",
+        prescription: ["3 Sätze", "12–15 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Leichtere Gewichte, perfekte Form. Diese Übung formt die breiten Schultern.",
+        info: {
+          target: "seitliche Schulter (mittlerer Deltoideus)",
+          steps: [
+            "Aufrecht stehen, Kurzhanteln seitlich am Körper, leichte Ellbogen-Beuge.",
+            "Hanteln kontrolliert seitlich anheben — bis Schulterhöhe (parallel zum Boden).",
+            "Ellbogen führen die Bewegung, nicht die Hände.",
+            "Oben kurz halten, kontrolliert (2 Sek) ablassen.",
+            "Nicht über die Schulterhöhe heben."
+          ],
+          tips: [
+            "Lieber leichte Gewichte mit sauberer Form.",
+            "Kein 'Schwingen' aus den Knien.",
+            "Wenn du den Trapez (Nackenmuskel) spürst → Gewicht zu schwer."
+          ]
+        }
+      },
+      {
+        name: "Trizeps-Kickbacks",
+        target: "Trizeps",
+        prescription: ["3 Sätze", "10–12 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Oberarm waagerecht und FIXIERT — nur der Unterarm bewegt sich.",
+        info: {
+          target: "Trizeps",
+          steps: [
+            "Vorgebeugte Position, Oberkörper fast parallel zum Boden.",
+            "Oberarme nah am Körper, parallel zum Boden — fixiert.",
+            "Unterarme hängen mit Hanteln senkrecht.",
+            "Unterarme nach hinten strecken bis Arm gerade.",
+            "Oben 1 Sek halten, kontrolliert zurück."
+          ],
+          tips: [
+            "Oberarm darf sich NICHT bewegen — nur Unterarm.",
+            "Mit kleinem Gewicht starten, Form ist alles.",
+            "Bei Rückenproblemen: einarmig mit Stütze auf Stuhl."
+          ]
+        }
+      }
+    ]
+  },
+  3: {
+    name: "Tag 3 — Beine & Core",
+    short: "Beine · Core · Ganzkörper-Stabilität",
+    intro: "Auch wenn dein Fokus Oberkörper ist: <strong>Beine darfst du nicht weglassen</strong>. Sie liefern Stabilität, Hormone für Muskelaufbau und schützen vor Verletzungen. Kürzeres, fokussiertes Beintraining.",
+    exercises: [
+      {
+        name: "Goblet Squats",
+        target: "Beine · Po · Core",
+        prescription: ["3 Sätze", "10–12 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Eine Kurzhantel vor der Brust halten. Schützt den unteren Rücken besser als andere Squat-Varianten.",
+        info: {
+          target: "Quadrizeps · Po · Core",
+          steps: [
+            "Eine Kurzhantel senkrecht vor der Brust halten (am oberen Ende).",
+            "Stand etwas weiter als schulterbreit, Zehen leicht nach außen.",
+            "Hüfte zurück, dann nach unten beugen — wie auf einen Stuhl setzen.",
+            "Soweit runter, wie es sauber geht (mind. Oberschenkel parallel).",
+            "Kraftvoll aus der Ferse hochdrücken, oben nicht ganz durchstrecken."
+          ],
+          tips: [
+            "Knie folgen den Zehenspitzen — nicht nach innen kippen.",
+            "Brust bleibt aufrecht, Blick nach vorne.",
+            "Bei Knie-Problemen: weniger tief, langsamer."
+          ]
+        }
+      },
+      {
+        name: "Ausfallschritte",
+        target: "Beine · Balance · Po",
+        prescription: ["3 Sätze", "8–10 Wdh", "je Seite"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Mit oder ohne Kurzhanteln. Schult Balance und einseitige Kraft — wichtig im Alltag.",
+        info: {
+          target: "Quadrizeps · Po · Balance",
+          steps: [
+            "Aufrecht stehen, evtl. Kurzhanteln seitlich.",
+            "Großen Schritt nach vorne mit einem Bein.",
+            "Vorderen Oberschenkel parallel zum Boden — Knie über Sprunggelenk.",
+            "Hinteres Knie senkt sich Richtung Boden (ohne aufzusetzen).",
+            "Aus der vorderen Ferse zurückdrücken in die Startposition."
+          ],
+          tips: [
+            "Oberkörper bleibt aufrecht — nicht nach vorne kippen.",
+            "Vorderes Knie NIEMALS über die Zehenspitze schieben.",
+            "Variante an der Wand mit einer Hand → bessere Balance."
+          ]
+        }
+      },
+      {
+        name: "Rumänisches Kreuzheben",
+        target: "hintere Kette · unterer Rücken",
+        prescription: ["3 Sätze", "10–12 Wdh"],
+        sets: 3,
+        repsLabel: "Wdh",
+        weightLabel: "kg",
+        hint: "Eine der wichtigsten Übungen für den unteren Rücken. <strong>Sehr saubere Form</strong> — der Rücken bleibt immer gerade.",
+        info: {
+          target: "Beinbeuger · Po · unterer Rücken",
+          steps: [
+            "Aufrecht stehen, Kurzhanteln vor den Oberschenkeln, Knie leicht gebeugt.",
+            "Hüfte nach hinten schieben (wie eine Tür schließen mit dem Po).",
+            "Oberkörper neigt sich nach vorne — Rücken STRENG gerade.",
+            "Hanteln gleiten an den Beinen entlang nach unten.",
+            "Soweit runter wie deine Beweglichkeit erlaubt (Schienbein-Mitte).",
+            "Hüfte nach vorne drücken zurück in Startposition."
+          ],
+          tips: [
+            "Rückenrundung wäre verletzungsgefährlich — lieber weniger tief.",
+            "Knie bleiben NICHT komplett gestreckt, aber kaum Bewegung.",
+            "Po anspannen am Ende der Bewegung."
+          ]
+        }
+      },
+      {
+        name: "Plank (Unterarmstütz)",
+        target: "Core · Stabilität",
+        prescription: ["3 Sätze", "30–60 Sek"],
+        sets: 3,
+        repsLabel: "Sek",
+        weightLabel: "—",
+        hint: "Qualität vor Dauer. Lieber 30 Sek mit perfekter Form als 60 mit Hüfte am Boden.",
+        info: {
+          target: "Bauchmuskeln · unterer Rücken · Schultern",
+          steps: [
+            "Auf Unterarme stützen, Ellbogen unter den Schultern.",
+            "Beine gestreckt, Zehen auf dem Boden.",
+            "Körper bildet eine gerade Linie — Kopf bis Ferse.",
+            "Bauch und Po aktiv anspannen.",
+            "Atmung gleichmäßig — nicht die Luft anhalten!"
+          ],
+          tips: [
+            "Hüfte nicht durchhängen UND nicht zu hoch.",
+            "Kopf neutral — nicht nach unten hängen lassen.",
+            "Wenn Form leidet → abbrechen, lieber 2× 20 Sek als 1× 40 Sek schlampig."
+          ]
+        }
+      },
+      {
+        name: "Vogelhund (Bird-Dog)",
+        target: "unterer Rücken · Core-Stabilität",
+        prescription: ["2 Sätze", "8 Wdh", "je Seite"],
+        sets: 2,
+        repsLabel: "Wdh",
+        weightLabel: "—",
+        hint: "Perfekt für die Wirbelsäulen-Stabilität — besonders wichtig im Alter.",
+        info: {
+          target: "unterer Rücken · Gesäß · Schultern · Core",
+          steps: [
+            "Auf alle Viere, Hände unter Schultern, Knie unter Hüften.",
+            "Rechten Arm gerade nach vorne strecken.",
+            "Gleichzeitig linkes Bein gerade nach hinten strecken.",
+            "Körper bildet eine gerade Linie — 2 Sek halten.",
+            "Kontrolliert zurück, Seite wechseln."
+          ],
+          tips: [
+            "Hüfte bleibt gerade — nicht zur Seite kippen.",
+            "Langsam und kontrolliert — keine Schwungbewegung.",
+            "Diese Übung beugt Rückenproblemen vor."
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// ================= STATE =================
+let state = {
+  sessions: [],          // { day: 1-3, date: ISO, data: { exIdx: { setIdx: {weight, reps, done} } } }
+  current: null,         // { day, data }
+  installDismissed: false
+};
+
+const STORAGE_KEY = 'eisenwille_v1';
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) state = { ...state, ...JSON.parse(s) };
+  } catch(e) { console.warn('State load failed', e); }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e) { console.warn('State save failed', e); }
+}
+
+// ================= NAVIGATION =================
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.screen === name);
+  });
+  window.scrollTo(0, 0);
+  if (name === 'progress') renderProgress();
+  if (name === 'home') renderHome();
+}
+
+// ================= HOME =================
+function getWeekStart(date = new Date()) {
+  const d = new Date(date);
+  const day = d.getDay() || 7;  // Sunday=0 → 7
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - day + 1);  // Monday
+  return d;
+}
+function isThisWeek(isoDate) {
+  const d = new Date(isoDate);
+  const ws = getWeekStart();
+  const we = new Date(ws); we.setDate(we.getDate() + 7);
+  return d >= ws && d < we;
+}
+function getCurrentWeekNumber() {
+  // Wochen, in denen min. 1 Session absolviert wurde
+  const weeks = new Set();
+  state.sessions.forEach(s => {
+    const ws = getWeekStart(new Date(s.date));
+    weeks.add(ws.toISOString());
+  });
+  return weeks.size;
+}
+function getStreak() {
+  // Aufeinanderfolgende Wochen mit >=3 Sessions, ab letzter abgeschlossener Woche
+  if (state.sessions.length === 0) return 0;
+  let streak = 0;
+  let cursor = getWeekStart();
+  // Wenn diese Woche schon 3 Sessions hat, zählt sie auch
+  while (true) {
+    const weekEnd = new Date(cursor); weekEnd.setDate(weekEnd.getDate() + 7);
+    const count = state.sessions.filter(s => {
+      const d = new Date(s.date);
+      return d >= cursor && d < weekEnd;
+    }).length;
+    if (count >= 3) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 7);
+    } else {
+      // Erlaube laufende Woche ohne 3 zu unterbrechen, falls erste Iteration
+      if (streak === 0 && cursor.getTime() === getWeekStart().getTime()) {
+        cursor.setDate(cursor.getDate() - 7);
+        continue;
+      }
+      break;
+    }
+    if (streak > 200) break;
+  }
+  return streak;
+}
+
+function getThisWeekDoneDays() {
+  const days = new Set();
+  state.sessions.forEach(s => {
+    if (isThisWeek(s.date)) days.add(s.day);
+  });
+  return days;
+}
+
+function renderHome() {
+  const doneDays = getThisWeekDoneDays();
+
+  // Stats
+  document.getElementById('statSessions').textContent = state.sessions.length;
+  document.getElementById('statWeek').textContent = `${doneDays.size}/3`;
+  let totalSets = 0;
+  state.sessions.forEach(s => {
+    Object.values(s.data || {}).forEach(ex => {
+      Object.values(ex).forEach(set => { if (set.done) totalSets++; });
+    });
+  });
+  document.getElementById('statSets').textContent = totalSets;
+
+  // Streak
+  document.getElementById('streakNum').textContent = getCurrentWeekNumber();
+
+  // Days
+  const grid = document.getElementById('dayGrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 3; i++) {
+    const day = PLAN[i];
+    const done = doneDays.has(i);
+    const card = document.createElement('div');
+    card.className = 'day-card' + (done ? ' done' : '');
+    card.onclick = () => openWorkout(i);
+    card.innerHTML = `
+      <div class="day-card-info">
+        <div class="day-card-eyebrow">Tag ${i}</div>
+        <div class="day-card-title">${day.name.split(' — ')[1] || day.name}</div>
+        <div class="day-card-desc">${day.short}</div>
+      </div>
+      <div class="day-card-action">${done ? '✓' : '›'}</div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ================= WORKOUT =================
+function openWorkout(dayNum) {
+  const day = PLAN[dayNum];
+
+  // Bereits abgeschlossen diese Woche? Daten ggf. laden
+  const existing = state.sessions.find(s => s.day === dayNum && isThisWeek(s.date));
+  const data = existing ? JSON.parse(JSON.stringify(existing.data)) : {};
+
+  // Letzter Werte für Progressive Overload Hint
+  const lastSession = [...state.sessions].reverse().find(s => s.day === dayNum && !isThisWeek(s.date));
+
+  state.current = { day: dayNum, data, lastSession };
+
+  document.getElementById('workoutTitle').textContent = day.name;
+  document.getElementById('workoutIntro').innerHTML = day.intro;
+
+  const list = document.getElementById('exerciseList');
+  list.innerHTML = '';
+
+  day.exercises.forEach((ex, exIdx) => {
+    if (!data[exIdx]) data[exIdx] = {};
+
+    const card = document.createElement('div');
+    card.className = 'exercise';
+
+    const pills = ex.prescription.map(p => `<span class="prescription-pill">${p}</span>`).join('');
+
+    let setsHTML = `<div class="sets-container">`;
+    setsHTML += `<div class="set-row" style="margin-bottom: -4px;">
+      <div class="set-label">Satz</div>
+      <div class="set-header" style="text-align:center;">${ex.weightLabel === '—' ? '—' : 'Gewicht (kg)'}</div>
+      <div class="set-header" style="text-align:center;">${ex.repsLabel}</div>
+      <div></div>
+    </div>`;
+
+    // Progressive Overload Vorschlag
+    if (lastSession) {
+      const lastEx = lastSession.data[exIdx];
+      if (lastEx) {
+        const allDone = Object.values(lastEx).every(s => s.done);
+        if (allDone) {
+          const lastWeight = Object.values(lastEx).find(s => s.weight)?.weight;
+          const lastReps = Object.values(lastEx).find(s => s.reps)?.reps;
+          let hint = '';
+          if (ex.weightLabel === 'kg' && lastWeight) {
+            hint = `Letzte Woche alle Sätze geschafft mit <strong>${lastWeight} kg</strong>. Versuche heute <strong>+1–2 kg</strong> pro Hantel.`;
+          } else if (ex.repsLabel === 'Wdh' && lastReps) {
+            hint = `Letzte Woche alle Sätze geschafft mit <strong>${lastReps} Wdh</strong>. Versuche heute <strong>+1–2 Wdh</strong>.`;
+          } else if (ex.repsLabel === 'Sek' && lastReps) {
+            hint = `Letzte Woche alle Sätze geschafft mit <strong>${lastReps} Sek</strong>. Versuche heute <strong>+5 Sek</strong>.`;
+          }
+          if (hint) setsHTML += `<div class="progressive-hint">📈 ${hint}</div>`;
+        } else {
+          setsHTML += `<div class="progressive-hint">📌 Wiederhole die Werte der letzten Woche — erst dann steigern.</div>`;
+        }
+      }
+    }
+
+    for (let i = 0; i < ex.sets; i++) {
+      const setData = data[exIdx][i] || {};
+      const lastEx = lastSession?.data[exIdx];
+      const lastSet = lastEx?.[i];
+      const wPlaceholder = lastSet?.weight ? lastSet.weight : '';
+      const rPlaceholder = lastSet?.reps ? lastSet.reps : '';
+
+      setsHTML += `
+        <div class="set-row">
+          <div class="set-label">${i + 1}</div>
+          ${ex.weightLabel === '—'
+            ? `<div></div>`
+            : `<input class="set-input" type="number" step="0.5" min="0" placeholder="${wPlaceholder}" value="${setData.weight || ''}" data-ex="${exIdx}" data-set="${i}" data-field="weight" inputmode="decimal">`
+          }
+          <input class="set-input" type="number" step="1" min="0" placeholder="${rPlaceholder}" value="${setData.reps || ''}" data-ex="${exIdx}" data-set="${i}" data-field="reps" inputmode="numeric">
+          <button class="set-check ${setData.done ? 'checked' : ''}" data-ex="${exIdx}" data-set="${i}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M5 12l5 5L20 7"/></svg>
+          </button>
+        </div>
+      `;
+    }
+    setsHTML += `</div>`;
+
+    card.innerHTML = `
+      <div class="exercise-head">
+        <div class="exercise-num">${exIdx + 1}</div>
+        <div class="exercise-title-wrap">
+          <div class="exercise-name">${ex.name}</div>
+          <div class="exercise-target">${ex.target}</div>
+        </div>
+        <button class="info-btn" onclick="openModal(${dayNum}, ${exIdx})">ⓘ</button>
+      </div>
+      <div class="exercise-prescription">${pills}</div>
+      ${ex.hint ? `<div style="padding: 0 16px 12px 56px; font-size: 12px; color: var(--text-dim); line-height:1.5;">${ex.hint}</div>` : ''}
+      ${setsHTML}
+    `;
+
+    list.appendChild(card);
+  });
+
+  // Event listeners on inputs/checks
+  list.querySelectorAll('.set-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const exIdx = parseInt(e.target.dataset.ex);
+      const setIdx = parseInt(e.target.dataset.set);
+      const field = e.target.dataset.field;
+      if (!state.current.data[exIdx]) state.current.data[exIdx] = {};
+      if (!state.current.data[exIdx][setIdx]) state.current.data[exIdx][setIdx] = {};
+      state.current.data[exIdx][setIdx][field] = e.target.value ? parseFloat(e.target.value) : null;
+    });
+  });
+
+  list.querySelectorAll('.set-check').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget;
+      const exIdx = parseInt(target.dataset.ex);
+      const setIdx = parseInt(target.dataset.set);
+      if (!state.current.data[exIdx]) state.current.data[exIdx] = {};
+      if (!state.current.data[exIdx][setIdx]) state.current.data[exIdx][setIdx] = {};
+      const newDone = !state.current.data[exIdx][setIdx].done;
+      state.current.data[exIdx][setIdx].done = newDone;
+      target.classList.toggle('checked', newDone);
+      // haptic if supported
+      if (newDone && navigator.vibrate) navigator.vibrate(30);
+    });
+  });
+
+  // Finish button label
+  const fb = document.getElementById('finishBtn');
+  if (existing) {
+    fb.textContent = 'Änderungen speichern';
+    fb.classList.add('done');
+  } else {
+    fb.textContent = 'Training abschließen';
+    fb.classList.remove('done');
+  }
+
+  showScreen('workout');
+}
+
+function finishWorkout() {
+  if (!state.current) return;
+  const { day, data } = state.current;
+
+  // Existing session in dieser Woche updaten oder neu anlegen
+  const existingIdx = state.sessions.findIndex(s => s.day === day && isThisWeek(s.date));
+  if (existingIdx >= 0) {
+    state.sessions[existingIdx].data = data;
+    state.sessions[existingIdx].date = new Date().toISOString();
+  } else {
+    state.sessions.push({ day, date: new Date().toISOString(), data });
+  }
+  saveState();
+  state.current = null;
+
+  if (navigator.vibrate) navigator.vibrate([50, 50, 100]);
+  showScreen('home');
+}
+
+// ================= MODAL =================
+function openModal(dayNum, exIdx) {
+  const ex = PLAN[dayNum].exercises[exIdx];
+  document.getElementById('modalTitle').textContent = ex.name;
+  document.getElementById('modalTarget').textContent = ex.info.target;
+  document.getElementById('modalSteps').innerHTML = ex.info.steps.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('modalTips').innerHTML = ex.info.tips.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+// ================= PROGRESS =================
+function renderProgress() {
+  document.getElementById('pStatSessions').textContent = state.sessions.length;
+  document.getElementById('pStatWeeks').textContent = getCurrentWeekNumber();
+  document.getElementById('pStatStreak').textContent = getStreak();
+
+  const list = document.getElementById('weekList');
+  list.innerHTML = '';
+
+  if (state.sessions.length === 0) {
+    list.innerHTML = '<div class="empty-state">Noch keine abgeschlossenen Trainings.<br/>Starte heute dein erstes Workout 💪</div>';
+    return;
+  }
+
+  // Gruppieren nach Woche
+  const weeks = {};
+  state.sessions.forEach(s => {
+    const ws = getWeekStart(new Date(s.date));
+    const key = ws.toISOString().slice(0, 10);
+    if (!weeks[key]) weeks[key] = { start: ws, days: new Set() };
+    weeks[key].days.add(s.day);
+  });
+
+  const sorted = Object.entries(weeks).sort((a,b) => b[0].localeCompare(a[0]));
+  sorted.forEach(([key, w]) => {
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    const dateStr = w.start.toLocaleDateString('de-DE', { day:'2-digit', month:'long' });
+    card.innerHTML = `
+      <div class="week-head">
+        <div class="week-title">Woche ab ${dateStr}</div>
+        <div class="week-count">${w.days.size}/3</div>
+      </div>
+      <div class="week-dots">
+        <div class="week-dot ${w.days.has(1) ? 'done' : ''}"></div>
+        <div class="week-dot ${w.days.has(2) ? 'done' : ''}"></div>
+        <div class="week-dot ${w.days.has(3) ? 'done' : ''}"></div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ================= RESET =================
+function resetAll() {
+  if (confirm('Wirklich alle Trainingsdaten löschen? Dies kann nicht rückgängig gemacht werden.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    state = { sessions: [], current: null, installDismissed: false };
+    renderHome();
+    showScreen('home');
+  }
+}
+
+// ================= INSTALL =================
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!state.installDismissed) {
+    document.getElementById('installBanner').classList.add('show');
+  }
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+  }
+});
+document.getElementById('installClose').addEventListener('click', () => {
+  state.installDismissed = true;
+  saveState();
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+// ================= SERVICE WORKER =================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW reg failed', err));
+  });
+}
+
+// ================= INIT =================
+loadState();
+renderHome();
+</script>
+</body>
+</html>

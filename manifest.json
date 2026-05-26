@@ -1,0 +1,26 @@
+{
+  "name": "Eisen & Wille — Trainingsplan",
+  "short_name": "Eisen & Wille",
+  "description": "Persönlicher Muskelaufbau-Trainingsplan: 3er-Split mit Klimmzug-Progression, Fortschritts-Tracking und Übungsanleitungen.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
