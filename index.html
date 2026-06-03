@@ -318,6 +318,108 @@
     padding: 14px; border-radius: 10px;
     margin-top: 20px; font-weight: 600;
   }
+  /* ================= ÜBUNGS-VERLAUF ================= */
+  .ex-hist-pb {
+    display: flex; gap: 10px; margin-bottom: 14px;
+  }
+  .pb-item {
+    flex: 1;
+    background: rgba(217,119,87,0.10);
+    border: 1px solid rgba(217,119,87,0.25);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .pb-label {
+    display: block;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--text-mute);
+    margin-bottom: 4px; font-weight: 600;
+  }
+  .pb-value {
+    font-size: 22px; font-weight: 700;
+    color: var(--accent-soft);
+    font-family: Georgia, serif;
+  }
+  .ex-hist-table { margin-top: 4px; }
+  .ex-hist-row {
+    display: flex; align-items: flex-start;
+    gap: 10px; padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ex-hist-row:last-child { border-bottom: none; }
+  .ex-hist-date {
+    font-size: 12px; color: var(--text-mute);
+    width: 54px; flex-shrink: 0; padding-top: 2px;
+  }
+  .ex-hist-sets { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; }
+  .ex-hist-set {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px; font-weight: 600;
+    color: var(--text);
+  }
+  .ex-hist-set.is-pb {
+    background: rgba(217,119,87,0.15);
+    border-color: rgba(217,119,87,0.4);
+    color: var(--accent-soft);
+  }
+  .hist-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    display: grid; place-items: center;
+    color: var(--text-dim); font-size: 14px; flex-shrink: 0;
+  }
+  .ex-select {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text); font-size: 14px;
+    font-family: inherit;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e6960' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  .ex-select optgroup { color: var(--text-mute); font-weight: 600; }
+  .ex-select option { color: var(--text); font-weight: 400; background: var(--bg-card); }
+  .hist-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .hist-table th {
+    text-align: left; padding: 8px 8px;
+    color: var(--text-mute); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .hist-table th.center { text-align: center; }
+  .hist-table td {
+    padding: 9px 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .hist-table td.date-cell {
+    color: var(--text-mute); font-size: 12px;
+  }
+  .hist-table td.set-cell { text-align: center; font-weight: 600; }
+  .hist-table td.pb-cell {
+    text-align: center; font-weight: 700;
+    color: var(--accent-soft);
+  }
+  .hist-table tr.latest-row td { background: rgba(217,119,87,0.06); }
+  .hist-table tr:last-child td { border-bottom: none; }
+  .hist-more {
+    text-align: center; font-size: 12px;
+    color: var(--text-mute); margin-top: 8px;
+    padding: 4px;
+  }
+
 
   /* ================= BOTTOM NAV ================= */
   nav.bottom {
@@ -424,7 +526,7 @@
     <div class="hero">
       <div class="label">Diese Woche · Block 1</div>
       <h1 class="display">Stark werden,<br/>Schritt für Schritt.</h1>
-      <div class="meta">3 Einheiten · Fokus auf Klimmzug-Progression, Brust, Schulter &amp; Arme</div>
+      <div class="meta">4 Einheiten · Fokus auf Klimmzug-Progression, Brust, Schulter &amp; Arme</div>
     </div>
 
     <div class="stats-row">
@@ -433,7 +535,7 @@
         <div class="stat-label">Einheiten total</div>
       </div>
       <div class="stat">
-        <div class="stat-value" id="statWeek">0/3</div>
+        <div class="stat-value" id="statWeek">0/4</div>
         <div class="stat-label">Diese Woche</div>
       </div>
       <div class="stat">
@@ -485,6 +587,7 @@
     </div>
     <div class="section-head"><h2>Verlauf</h2></div>
     <div id="weekList"></div>
+    <div id="exSelectorSection"></div>
   </section>
 
   <!-- =================== INFO SCREEN =================== -->
@@ -501,7 +604,7 @@
 
     <div class="workout-intro">
       <strong>Plan-Struktur</strong><br/>
-      Du trainierst in einem 3er-Split mit Fokus auf Oberkörper-Push, Oberkörper-Pull (inkl. Klimmzug-Progression) und einem Ganzkörper-Tag mit Beinen &amp; Core. Empfohlene Pause zwischen Sätzen: <strong>90–120 Sekunden</strong>.
+      Du trainierst in einem 4-Tage-Split: 2× Oberkörper (A = Push-Schwerpunkt, B = Pull-Schwerpunkt, beide mit Gegenübung) und 2× Unterkörper (A und B mit leicht variierten Übungen). Jede Muskelgruppe wird 2× pro Woche trainiert. Empfohlene Pause zwischen Sätzen: <strong>90–120 Sekunden</strong>.
     </div>
 
     <div class="workout-intro">
@@ -553,6 +656,18 @@
   </div>
 </div>
 
+
+<!-- =================== EXERCISE HISTORY MODAL =================== -->
+<div class="modal-backdrop" id="exHistModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="target-line" id="exHistTarget"></div>
+    <h3 id="exHistTitle"></h3>
+    <div id="exHistContent" style="margin-top: 16px;"></div>
+    <button class="modal-close" onclick="closeExHist()">Schließen</button>
+  </div>
+</div>
+
 <!-- =================== BOTTOM NAV =================== -->
 <nav class="bottom">
   <button class="nav-btn active" data-screen="home" onclick="showScreen('home')">
@@ -573,382 +688,468 @@
 // ================= TRAININGSPLAN =================
 const PLAN = {
   1: {
-    name: "Tag 1 — Pull & Klimmzug",
-    short: "Rücken · Bizeps · Klimmzug-Progression",
-    intro: "Heute liegt der Fokus auf dem <strong>Klimmzug-Aufbau</strong>. Du arbeitest dich systematisch nach oben: Aufhängen, Negative, dann assistierte Varianten. Halte bei der Klimmzug-Progression strenge Technik ein.",
+    name: "Tag 1 \u2014 Oberk\u00f6rper A",
+    short: "Push-Schwerpunkt \u00b7 R\u00fccken-Erg\u00e4nzung \u00b7 Schulter",
+    intro: "Heute liegt der Push-Fokus vorne \u2014 Brust und Schultern. Das Rudern am Ende balanciert die Schulter aus. Achte bei <strong>allen Druck\u00fcbungen auf Schulterstabilit\u00e4t</strong> \u2014 Schulterbl\u00e4tter zusammen und runter, bevor du das Gewicht bewegst.",
     exercises: [
       {
-        name: "Dead Hang (Aufhängen)",
-        target: "Griff · Schultern stabilisieren",
-        prescription: ["3 Sätze", "20–40 Sek"],
-        sets: 3,
-        repsLabel: "Sek",
-        weightLabel: "—",
-        hint: "Beginn-Stufe der Klimmzug-Progression. Wenn 3× 40 Sek möglich sind → nächste Woche Negativ-Klimmzüge.",
+        name: "Kurzhantel-Bankdr\u00fccken (Boden oder Bank)",
+        target: "Brust \u00b7 vordere Schulter \u00b7 Trizeps",
+        prescription: ["4 S\u00e4tze", "8\u201312 Wdh"],
+        sets: 4, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Kerneinheit f\u00fcr die Brust. Ellbogen ca. 45\u00b0 zum K\u00f6rper \u2014 nicht weit ausgestellt.",
         info: {
-          target: "Schultern · Griffkraft · Latissimus",
+          target: "Brustmuskel \u00b7 vordere Schulter \u00b7 Trizeps",
           steps: [
-            "Stange im Schulterbreit-Griff fassen, Handflächen nach vorne.",
-            "Vom Boden abdrücken und frei hängen lassen — Arme gestreckt.",
-            "Schultern aktiv nach unten ziehen (nicht hochgezogen).",
-            "Körper ruhig halten, gleichmäßig atmen.",
-            "Nach der vorgegebenen Zeit kontrolliert ablassen."
-          ],
-          tips: [
-            "Die Schultern aktiv nach unten ziehen — nicht passiv 'durchhängen'.",
-            "Bauch leicht anspannen, Beine ruhig.",
-            "Bei Griffermüdung lieber kürzer aber sauber als länger und ausschütteln."
-          ]
-        }
-      },
-      {
-        name: "Negativ-Klimmzüge",
-        target: "Rücken · Bizeps · Klimmzug-Aufbau",
-        prescription: ["3 Sätze", "3–5 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "—",
-        hint: "Springe in die obere Position, lasse dich 5 Sek kontrolliert herunter. Das ist die <strong>wirksamste Methode</strong>, um Klimmzüge zu lernen.",
-        info: {
-          target: "Latissimus · Bizeps · oberer Rücken",
-          steps: [
-            "Auf Stuhl oder Stange stellen, bis Kinn über der Stange ist.",
-            "Stange festgreifen (schulterbreit, Obergriff).",
-            "Füße langsam von der Hilfe lösen — du hängst oben am Kinn.",
-            "5 Sekunden kontrolliert herunterlassen — KEIN Fallen.",
-            "Unten ankommen, wieder hochstellen, nächste Wdh."
-          ],
-          tips: [
-            "Je langsamer das Herunterlassen, desto besser der Trainingseffekt.",
-            "Wenn 3× 5 Wdh mit 5 Sek Negativphase möglich sind → echte Klimmzüge mit Band testen.",
-            "Schultern unten halten — nicht hochziehen lassen."
-          ]
-        }
-      },
-      {
-        name: "Kurzhantel-Rudern (einarmig)",
-        target: "Latissimus · oberer Rücken",
-        prescription: ["3 Sätze", "8–12 Wdh", "je Seite"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Schwere Grundübung für die Rückenmasse. Ellbogen eng am Körper, ziehe zur Hüfte — nicht zur Brust.",
-        info: {
-          target: "Latissimus · Rhomboiden · hinterer Delta",
-          steps: [
-            "Linkes Knie und linke Hand auf eine Bank (oder Stuhl) — Rücken parallel zum Boden.",
-            "Kurzhantel in der rechten Hand, Arm gestreckt nach unten.",
-            "Hantel zur Hüfte ziehen, Ellbogen nah am Körper.",
-            "Oben kurz halten, Schulterblatt nach hinten unten.",
-            "Kontrolliert wieder senken. Alle Wdh., dann Seite wechseln."
-          ],
-          tips: [
-            "Den Rücken IMMER gerade halten — kein Rundrücken.",
-            "Kopf in Verlängerung der Wirbelsäule, nicht hochheben.",
-            "Die Bewegung kommt aus dem Rücken, nicht aus dem Arm."
-          ]
-        }
-      },
-      {
-        name: "Kurzhantel-Curls",
-        target: "Bizeps",
-        prescription: ["3 Sätze", "10–12 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Beide Arme gleichzeitig oder im Wechsel. Ellbogen am Körper fixiert.",
-        info: {
-          target: "Bizeps · Unterarme",
-          steps: [
-            "Aufrecht stehen, Kurzhanteln in den Händen, Handflächen nach vorne.",
-            "Ellbogen eng am Körper, nicht nach vorne wandern lassen.",
-            "Hanteln zu den Schultern führen — kontrolliert.",
-            "Oben kurz anspannen.",
-            "Kontrolliert (2 Sek) wieder ablassen — nicht fallen lassen."
-          ],
-          tips: [
-            "Kein 'Schwingen' aus dem Rumpf.",
-            "Negative Phase ist genauso wichtig wie das Hochheben.",
-            "Wenn du schwingst → Gewicht zu schwer."
-          ]
-        }
-      },
-      {
-        name: "Face Pulls mit Handtuch/Band",
-        target: "hintere Schulter · Haltung",
-        prescription: ["3 Sätze", "15 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "—",
-        hint: "Sehr wichtig für deine Schulter-Gesundheit. Mit Band an Türrahmen oder fest geknotetem Handtuch.",
-        info: {
-          target: "hintere Schultern · Trapez · Rotatoren",
-          steps: [
-            "Band auf Brusthöhe befestigen (Türrahmen, Stange).",
-            "Band an beiden Enden greifen, Schritt zurück bis Spannung da ist.",
-            "Arme nach vorne gestreckt.",
-            "Band zur Stirn ziehen — Ellbogen hoch und nach außen.",
-            "Schulterblätter zusammenführen, 1 Sek halten, kontrolliert zurück."
-          ],
-          tips: [
-            "Diese Übung beugt Schulter-Problemen vor.",
-            "Lieber leichteres Band & saubere Ausführung als zu viel Zug.",
-            "Bewegung kommt aus den Schulterblättern, nicht aus den Armen."
-          ]
-        }
-      }
-    ]
-  },
-  2: {
-    name: "Tag 2 — Push",
-    short: "Brust · Schulter · Trizeps",
-    intro: "Heute drückst du. Achte bei <strong>allen Druckübungen auf Schulterstabilität</strong> — Schulterblätter zusammen und runter, bevor du das Gewicht bewegst.",
-    exercises: [
-      {
-        name: "Kurzhantel-Bankdrücken (Boden oder Bank)",
-        target: "Brust · vordere Schulter",
-        prescription: ["4 Sätze", "8–12 Wdh"],
-        sets: 4,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Kerneinheit für die Brust. Wenn du keine Bank hast, geht es auch auf dem Boden — der schützt zusätzlich die Schultern.",
-        info: {
-          target: "Brustmuskel · vordere Schulter · Trizeps",
-          steps: [
-            "Auf den Rücken legen, Kurzhanteln über der Brust, Arme gestreckt.",
-            "Schulterblätter zusammenziehen und Richtung Hüfte schieben.",
+            "Auf den R\u00fccken legen, Kurzhanteln \u00fcber der Brust, Arme gestreckt.",
+            "Schulterbl\u00e4tter zusammenziehen und Richtung H\u00fcfte schieben.",
             "Hanteln kontrolliert seitlich der Brust absenken (2 Sek).",
-            "Am tiefsten Punkt: Ellbogen ca. 45° zum Körper (nicht 90°!).",
-            "Kraftvoll nach oben drücken, oben nicht durchstrecken."
+            "Ellbogen ca. 45\u00b0 zum K\u00f6rper \u2014 nicht auf 90\u00b0 rausspreizen.",
+            "Kraftvoll nach oben dr\u00fccken, oben nicht durchstrecken."
           ],
           tips: [
-            "Ellbogen NIE auf 90° zum Körper rausspreizen → Schulterproblem.",
-            "Beim Boden-Drücken Ellbogen am Boden absetzen, kurz halten, hoch.",
-            "Atme beim Absenken ein, beim Drücken aus."
+            "Ellbogen NIE auf 90\u00b0 zum K\u00f6rper rausspreizen \u2192 Schulterproblem.",
+            "Beim Boden-Dr\u00fccken Ellbogen am Boden absetzen, kurz halten, hoch.",
+            "Atme beim Absenken ein, beim Dr\u00fccken aus."
           ]
         }
       },
       {
-        name: "Liegestütz",
-        target: "Brust · Schulter · Core",
-        prescription: ["3 Sätze", "8–15 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "—",
-        hint: "Falls zu schwer: Hände erhöht (Tisch, Stuhl). Falls zu leicht: Füße erhöht oder langsamere Negativphase (3 Sek runter).",
+        name: "Schulterdr\u00fccken stehend",
+        target: "Schulter \u00b7 Trizeps",
+        prescription: ["3 S\u00e4tze", "8\u201312 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Bauch anspannen, kein Hohlkreuz. Stehend besser f\u00fcr Schulter-Stabilit\u00e4t als sitzend.",
         info: {
-          target: "Brust · vordere Schulter · Trizeps · Core",
-          steps: [
-            "Plank-Position, Hände schulterbreit unter den Schultern.",
-            "Körper bildet eine gerade Linie von Kopf bis Fuß.",
-            "Kontrolliert absenken bis Brust knapp über dem Boden (2 Sek).",
-            "Ellbogen ca. 45° zum Körper, nicht weit ausgestellt.",
-            "Kraftvoll nach oben drücken, Bauch & Po angespannt."
-          ],
-          tips: [
-            "Hüfte nicht durchhängen lassen — Core anspannen!",
-            "Lieber 5 saubere als 15 schlampige Wdh.",
-            "Variationen: Hände erhöht (leichter), Füße erhöht (schwerer)."
-          ]
-        }
-      },
-      {
-        name: "Schulterdrücken stehend",
-        target: "Schulter",
-        prescription: ["3 Sätze", "8–12 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Im Stehen besser für die Schulter-Stabilität. Bauch anspannen, kein Hohlkreuz!",
-        info: {
-          target: "vordere & seitliche Schulter · Trizeps",
+          target: "vordere & seitliche Schulter \u00b7 Trizeps",
           steps: [
             "Aufrecht stehen, schulterbreit, Knie leicht gebeugt.",
-            "Kurzhanteln auf Schulterhöhe, Handflächen nach vorne.",
-            "Bauch anspannen, Po anspannen — kein Hohlkreuz.",
-            "Hanteln kontrolliert nach oben drücken, leicht zueinander.",
-            "Oben nicht ganz durchstrecken, kontrolliert zurück."
+            "Kurzhanteln auf Schulterh\u00f6he, Handfl\u00e4chen nach vorne.",
+            "Bauch anspannen, Po anspannen \u2014 kein Hohlkreuz.",
+            "Hanteln kontrolliert nach oben dr\u00fccken, leicht zueinander.",
+            "Oben nicht ganz durchstrecken, kontrolliert zur\u00fcck."
           ],
           tips: [
-            "Wenn die Schultern zwicken → Übung pausieren oder Gewicht reduzieren.",
-            "Niemals den Rücken hohl machen, um mehr Gewicht zu schaffen.",
-            "Atmung: beim Hochdrücken ausatmen."
+            "Wenn die Schultern zwicken \u2192 Gewicht reduzieren oder pausieren.",
+            "Niemals den R\u00fccken hohl machen, um mehr Gewicht zu schaffen.",
+            "Atmung: beim Hochdr\u00fccken ausatmen."
           ]
         }
       },
       {
         name: "Seitheben",
         target: "seitliche Schulter (Breite)",
-        prescription: ["3 Sätze", "12–15 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Leichtere Gewichte, perfekte Form. Diese Übung formt die breiten Schultern.",
+        prescription: ["3 S\u00e4tze", "12\u201315 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Leichtere Gewichte, perfekte Form. Ellbogen f\u00fchren die Bewegung.",
         info: {
           target: "seitliche Schulter (mittlerer Deltoideus)",
           steps: [
-            "Aufrecht stehen, Kurzhanteln seitlich am Körper, leichte Ellbogen-Beuge.",
-            "Hanteln kontrolliert seitlich anheben — bis Schulterhöhe (parallel zum Boden).",
-            "Ellbogen führen die Bewegung, nicht die Hände.",
+            "Aufrecht stehen, Kurzhanteln seitlich am K\u00f6rper, leichte Ellbogen-Beuge.",
+            "Hanteln kontrolliert seitlich anheben \u2014 bis Schulterh\u00f6he.",
+            "Ellbogen f\u00fchren die Bewegung, nicht die H\u00e4nde.",
             "Oben kurz halten, kontrolliert (2 Sek) ablassen.",
-            "Nicht über die Schulterhöhe heben."
+            "Nicht \u00fcber die Schulterh\u00f6he heben."
           ],
           tips: [
             "Lieber leichte Gewichte mit sauberer Form.",
             "Kein 'Schwingen' aus den Knien.",
-            "Wenn du den Trapez (Nackenmuskel) spürst → Gewicht zu schwer."
+            "Wenn du den Trapez (Nackenmuskel) sp\u00fcrst \u2192 Gewicht zu schwer."
           ]
         }
       },
       {
-        name: "Trizeps-Kickbacks",
-        target: "Trizeps",
-        prescription: ["3 Sätze", "10–12 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Oberarm waagerecht und FIXIERT — nur der Unterarm bewegt sich.",
+        name: "Kurzhantel-Rudern (einarmig)",
+        target: "Latissimus \u00b7 oberer R\u00fccken",
+        prescription: ["3 S\u00e4tze", "8\u201312 Wdh", "je Seite"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Pull-Erg\u00e4nzung nach dem Push. H\u00e4lt die Schulter ausgeglichen. Ziehe zur H\u00fcfte, nicht zur Brust.",
         info: {
-          target: "Trizeps",
+          target: "Latissimus \u00b7 Rhomboiden \u00b7 hinterer Delta",
           steps: [
-            "Vorgebeugte Position, Oberkörper fast parallel zum Boden.",
-            "Oberarme nah am Körper, parallel zum Boden — fixiert.",
-            "Unterarme hängen mit Hanteln senkrecht.",
-            "Unterarme nach hinten strecken bis Arm gerade.",
-            "Oben 1 Sek halten, kontrolliert zurück."
+            "Linkes Knie und linke Hand auf eine Bank (oder Stuhl) \u2014 R\u00fccken parallel zum Boden.",
+            "Kurzhantel in der rechten Hand, Arm gestreckt nach unten.",
+            "Hantel zur H\u00fcfte ziehen, Ellbogen nah am K\u00f6rper.",
+            "Oben kurz halten, Schulterblatt nach hinten unten.",
+            "Kontrolliert wieder senken. Alle Wdh., dann Seite wechseln."
           ],
           tips: [
-            "Oberarm darf sich NICHT bewegen — nur Unterarm.",
-            "Mit kleinem Gewicht starten, Form ist alles.",
-            "Bei Rückenproblemen: einarmig mit Stütze auf Stuhl."
+            "Den R\u00fccken IMMER gerade halten \u2014 kein Rundr\u00fccken.",
+            "Kopf in Verl\u00e4ngerung der Wirbels\u00e4ule, nicht hochheben.",
+            "Die Bewegung kommt aus dem R\u00fccken, nicht aus dem Arm."
+          ]
+        }
+      },
+      {
+        name: "Face Pulls mit Handtuch/Band",
+        target: "hintere Schulter \u00b7 Haltung",
+        prescription: ["3 S\u00e4tze", "15 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "\u2014",
+        hint: "Pflicht nach jedem Push-Tag \u2014 h\u00e4lt die Schulter gesund und gleicht den Dr\u00fcck-Fokus aus.",
+        info: {
+          target: "hintere Schultern \u00b7 Trapez \u00b7 Rotatoren",
+          steps: [
+            "Band auf Brusth\u00f6he befestigen (T\u00fcrrahmen, Stange).",
+            "Band an beiden Enden greifen, Schritt zur\u00fcck bis Spannung da ist.",
+            "Arme nach vorne gestreckt.",
+            "Band zur Stirn ziehen \u2014 Ellbogen hoch und nach au\u00dfen.",
+            "Schulterbl\u00e4tter zusammenf\u00fchren, 1 Sek halten, kontrolliert zur\u00fcck."
+          ],
+          tips: [
+            "Diese \u00dcbung beugt Schulter-Problemen vor \u2014 nie weglassen.",
+            "Lieber leichteres Band & saubere Ausf\u00fchrung als zu viel Zug.",
+            "Bewegung kommt aus den Schulterbl\u00e4ttern, nicht aus den Armen."
           ]
         }
       }
     ]
   },
-  3: {
-    name: "Tag 3 — Beine & Core",
-    short: "Beine · Core · Ganzkörper-Stabilität",
-    intro: "Auch wenn dein Fokus Oberkörper ist: <strong>Beine darfst du nicht weglassen</strong>. Sie liefern Stabilität, Hormone für Muskelaufbau und schützen vor Verletzungen. Kürzeres, fokussiertes Beintraining.",
+  2: {
+    name: "Tag 2 \u2014 Unterk\u00f6rper A",
+    short: "Beine \u00b7 Po \u00b7 Core-Stabilit\u00e4t",
+    intro: "Beine und Core. <strong>Auch wenn der Fokus Oberk\u00f6rper ist</strong> \u2014 Beintraining liefert Wachstumshormone f\u00fcr den ganzen K\u00f6rper und sch\u00fctzt vor Verletzungen.",
     exercises: [
       {
         name: "Goblet Squats",
-        target: "Beine · Po · Core",
-        prescription: ["3 Sätze", "10–12 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Eine Kurzhantel vor der Brust halten. Schützt den unteren Rücken besser als andere Squat-Varianten.",
+        target: "Beine \u00b7 Po \u00b7 Core",
+        prescription: ["3 S\u00e4tze", "10\u201312 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Eine Kurzhantel vor der Brust halten. Sch\u00fctzt den unteren R\u00fccken besser als andere Squat-Varianten.",
         info: {
-          target: "Quadrizeps · Po · Core",
+          target: "Quadrizeps \u00b7 Po \u00b7 Core",
           steps: [
             "Eine Kurzhantel senkrecht vor der Brust halten (am oberen Ende).",
-            "Stand etwas weiter als schulterbreit, Zehen leicht nach außen.",
-            "Hüfte zurück, dann nach unten beugen — wie auf einen Stuhl setzen.",
+            "Stand etwas weiter als schulterbreit, Zehen leicht nach au\u00dfen.",
+            "H\u00fcfte zur\u00fcck, dann nach unten beugen \u2014 wie auf einen Stuhl setzen.",
             "Soweit runter, wie es sauber geht (mind. Oberschenkel parallel).",
-            "Kraftvoll aus der Ferse hochdrücken, oben nicht ganz durchstrecken."
+            "Kraftvoll aus der Ferse hochdr\u00fccken, oben nicht ganz durchstrecken."
           ],
           tips: [
-            "Knie folgen den Zehenspitzen — nicht nach innen kippen.",
+            "Knie folgen den Zehenspitzen \u2014 nicht nach innen kippen.",
             "Brust bleibt aufrecht, Blick nach vorne.",
             "Bei Knie-Problemen: weniger tief, langsamer."
           ]
         }
       },
       {
-        name: "Ausfallschritte",
-        target: "Beine · Balance · Po",
-        prescription: ["3 Sätze", "8–10 Wdh", "je Seite"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Mit oder ohne Kurzhanteln. Schult Balance und einseitige Kraft — wichtig im Alltag.",
+        name: "Ausfallschritte vorw\u00e4rts",
+        target: "Beine \u00b7 Balance \u00b7 Po",
+        prescription: ["3 S\u00e4tze", "8\u201310 Wdh", "je Seite"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Mit oder ohne Kurzhanteln. Schult Balance und einseitige Kraft.",
         info: {
-          target: "Quadrizeps · Po · Balance",
+          target: "Quadrizeps \u00b7 Po \u00b7 Balance",
           steps: [
             "Aufrecht stehen, evtl. Kurzhanteln seitlich.",
-            "Großen Schritt nach vorne mit einem Bein.",
-            "Vorderen Oberschenkel parallel zum Boden — Knie über Sprunggelenk.",
+            "Gro\u00dfen Schritt nach vorne mit einem Bein.",
+            "Vorderen Oberschenkel parallel zum Boden \u2014 Knie \u00fcber Sprunggelenk.",
             "Hinteres Knie senkt sich Richtung Boden (ohne aufzusetzen).",
-            "Aus der vorderen Ferse zurückdrücken in die Startposition."
+            "Aus der vorderen Ferse zur\u00fcckdr\u00fccken in die Startposition."
           ],
           tips: [
-            "Oberkörper bleibt aufrecht — nicht nach vorne kippen.",
-            "Vorderes Knie NIEMALS über die Zehenspitze schieben.",
-            "Variante an der Wand mit einer Hand → bessere Balance."
+            "Oberk\u00f6rper bleibt aufrecht \u2014 nicht nach vorne kippen.",
+            "Vorderes Knie NIEMALS \u00fcber die Zehenspitze schieben.",
+            "Variante an der Wand mit einer Hand \u2192 bessere Balance."
           ]
         }
       },
       {
-        name: "Rumänisches Kreuzheben",
-        target: "hintere Kette · unterer Rücken",
-        prescription: ["3 Sätze", "10–12 Wdh"],
-        sets: 3,
-        repsLabel: "Wdh",
-        weightLabel: "kg",
-        hint: "Eine der wichtigsten Übungen für den unteren Rücken. <strong>Sehr saubere Form</strong> — der Rücken bleibt immer gerade.",
+        name: "Rum\u00e4nisches Kreuzheben",
+        target: "hintere Kette \u00b7 unterer R\u00fccken",
+        prescription: ["3 S\u00e4tze", "10\u201312 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "<strong>Sehr saubere Form</strong> \u2014 der R\u00fccken bleibt immer gerade. Bewegung kommt aus der H\u00fcfte.",
         info: {
-          target: "Beinbeuger · Po · unterer Rücken",
+          target: "Beinbeuger \u00b7 Po \u00b7 unterer R\u00fccken",
           steps: [
             "Aufrecht stehen, Kurzhanteln vor den Oberschenkeln, Knie leicht gebeugt.",
-            "Hüfte nach hinten schieben (wie eine Tür schließen mit dem Po).",
-            "Oberkörper neigt sich nach vorne — Rücken STRENG gerade.",
+            "H\u00fcfte nach hinten schieben (wie eine T\u00fcr schlie\u00dfen mit dem Po).",
+            "Oberk\u00f6rper neigt sich nach vorne \u2014 R\u00fccken STRENG gerade.",
             "Hanteln gleiten an den Beinen entlang nach unten.",
-            "Soweit runter wie deine Beweglichkeit erlaubt (Schienbein-Mitte).",
-            "Hüfte nach vorne drücken zurück in Startposition."
+            "Soweit runter wie deine Beweglichkeit erlaubt, dann H\u00fcfte nach vorne dr\u00fccken."
           ],
           tips: [
-            "Rückenrundung wäre verletzungsgefährlich — lieber weniger tief.",
-            "Knie bleiben NICHT komplett gestreckt, aber kaum Bewegung.",
+            "R\u00fcckenrundung w\u00e4re verletzungsgef\u00e4hrlich \u2014 lieber weniger tief.",
+            "Knie bleiben nicht komplett gestreckt, aber kaum Bewegung.",
             "Po anspannen am Ende der Bewegung."
           ]
         }
       },
       {
-        name: "Plank (Unterarmstütz)",
-        target: "Core · Stabilität",
-        prescription: ["3 Sätze", "30–60 Sek"],
-        sets: 3,
-        repsLabel: "Sek",
-        weightLabel: "—",
-        hint: "Qualität vor Dauer. Lieber 30 Sek mit perfekter Form als 60 mit Hüfte am Boden.",
+        name: "Plank (Unterarmst\u00fctz)",
+        target: "Core \u00b7 Stabilit\u00e4t",
+        prescription: ["3 S\u00e4tze", "30\u201360 Sek"],
+        sets: 3, repsLabel: "Sek", weightLabel: "\u2014",
+        hint: "Qualit\u00e4t vor Dauer. Lieber 30 Sek perfekt als 60 Sek mit H\u00fcfte am Boden.",
         info: {
-          target: "Bauchmuskeln · unterer Rücken · Schultern",
+          target: "Bauchmuskeln \u00b7 unterer R\u00fccken \u00b7 Schultern",
           steps: [
-            "Auf Unterarme stützen, Ellbogen unter den Schultern.",
+            "Auf Unterarme st\u00fctzen, Ellbogen unter den Schultern.",
             "Beine gestreckt, Zehen auf dem Boden.",
-            "Körper bildet eine gerade Linie — Kopf bis Ferse.",
+            "K\u00f6rper bildet eine gerade Linie \u2014 Kopf bis Ferse.",
             "Bauch und Po aktiv anspannen.",
-            "Atmung gleichmäßig — nicht die Luft anhalten!"
+            "Atmung gleichm\u00e4\u00dfig \u2014 nicht die Luft anhalten!"
           ],
           tips: [
-            "Hüfte nicht durchhängen UND nicht zu hoch.",
-            "Kopf neutral — nicht nach unten hängen lassen.",
-            "Wenn Form leidet → abbrechen, lieber 2× 20 Sek als 1× 40 Sek schlampig."
+            "H\u00fcfte nicht durchh\u00e4ngen UND nicht zu hoch.",
+            "Kopf neutral \u2014 nicht nach unten h\u00e4ngen lassen.",
+            "Wenn Form leidet \u2192 abbrechen, lieber 2\u00d7 20 Sek sauber."
           ]
         }
       },
       {
         name: "Vogelhund (Bird-Dog)",
-        target: "unterer Rücken · Core-Stabilität",
-        prescription: ["2 Sätze", "8 Wdh", "je Seite"],
-        sets: 2,
-        repsLabel: "Wdh",
-        weightLabel: "—",
-        hint: "Perfekt für die Wirbelsäulen-Stabilität — besonders wichtig im Alter.",
+        target: "unterer R\u00fccken \u00b7 Core-Stabilit\u00e4t",
+        prescription: ["2 S\u00e4tze", "8 Wdh", "je Seite"],
+        sets: 2, repsLabel: "Wdh", weightLabel: "\u2014",
+        hint: "Perfekt f\u00fcr die Wirbels\u00e4ulen-Stabilit\u00e4t \u2014 besonders wichtig im Alter.",
         info: {
-          target: "unterer Rücken · Gesäß · Schultern · Core",
+          target: "unterer R\u00fccken \u00b7 Ges\u00e4\u00df \u00b7 Schultern \u00b7 Core",
           steps: [
-            "Auf alle Viere, Hände unter Schultern, Knie unter Hüften.",
+            "Auf alle Viere, H\u00e4nde unter Schultern, Knie unter H\u00fcften.",
             "Rechten Arm gerade nach vorne strecken.",
             "Gleichzeitig linkes Bein gerade nach hinten strecken.",
-            "Körper bildet eine gerade Linie — 2 Sek halten.",
-            "Kontrolliert zurück, Seite wechseln."
+            "K\u00f6rper bildet eine gerade Linie \u2014 2 Sek halten.",
+            "Kontrolliert zur\u00fcck, Seite wechseln."
           ],
           tips: [
-            "Hüfte bleibt gerade — nicht zur Seite kippen.",
-            "Langsam und kontrolliert — keine Schwungbewegung.",
-            "Diese Übung beugt Rückenproblemen vor."
+            "H\u00fcfte bleibt gerade \u2014 nicht zur Seite kippen.",
+            "Langsam und kontrolliert \u2014 keine Schwungbewegung.",
+            "Diese \u00dcbung beugt R\u00fcckenproblemen vor."
+          ]
+        }
+      }
+    ]
+  },
+  3: {
+    name: "Tag 3 \u2014 Oberk\u00f6rper B",
+    short: "Pull-Schwerpunkt \u00b7 Klimmzug-Progression \u00b7 Push-Erg\u00e4nzung",
+    intro: "Heute liegt der Pull-Fokus vorne \u2014 R\u00fccken und Bizeps, mit Klimmzug-Aufbau als Herzst\u00fcck. Liegest\u00fctz und Trizeps am Ende halten das Gleichgewicht. <strong>Schultern bleiben unten</strong> bei allen Zugbewegungen.",
+    exercises: [
+      {
+        name: "Dead Hang (Aufh\u00e4ngen)",
+        target: "Griff \u00b7 Schultern stabilisieren \u00b7 Klimmzug-Basis",
+        prescription: ["3 S\u00e4tze", "20\u201340 Sek"],
+        sets: 3, repsLabel: "Sek", weightLabel: "\u2014",
+        hint: "Beginn-Stufe der Klimmzug-Progression. Wenn 3\u00d7 40 Sek m\u00f6glich sind \u2192 n\u00e4chste Woche Negativ-Klimmz\u00fcge.",
+        info: {
+          target: "Schultern \u00b7 Griffkraft \u00b7 Latissimus",
+          steps: [
+            "Stange im Schulterbreit-Griff fassen, Handfl\u00e4chen nach vorne.",
+            "Vom Boden abdr\u00fccken und frei h\u00e4ngen lassen \u2014 Arme gestreckt.",
+            "Schultern aktiv nach unten ziehen (nicht hochgezogen).",
+            "K\u00f6rper ruhig halten, gleichm\u00e4\u00dfig atmen.",
+            "Nach der vorgegebenen Zeit kontrolliert ablassen."
+          ],
+          tips: [
+            "Schultern aktiv nach unten ziehen \u2014 nicht passiv 'durchh\u00e4ngen'.",
+            "Bauch leicht anspannen, Beine ruhig.",
+            "Bei Grifferm\u00fcdung lieber k\u00fcrzer aber sauber."
+          ]
+        }
+      },
+      {
+        name: "Negativ-Klimmz\u00fcge",
+        target: "R\u00fccken \u00b7 Bizeps \u00b7 Klimmzug-Aufbau",
+        prescription: ["3 S\u00e4tze", "3\u20135 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "\u2014",
+        hint: "Springe in die obere Position, lasse dich 5 Sek kontrolliert herunter. <strong>Die wirksamste Methode</strong>, um Klimmz\u00fcge zu lernen.",
+        info: {
+          target: "Latissimus \u00b7 Bizeps \u00b7 oberer R\u00fccken",
+          steps: [
+            "Auf Stuhl oder Stange stellen, bis Kinn \u00fcber der Stange ist.",
+            "Stange festgreifen (schulterbreit, Obergriff).",
+            "F\u00fc\u00dfe langsam von der Hilfe l\u00f6sen \u2014 du h\u00e4ngst oben am Kinn.",
+            "5 Sekunden kontrolliert herunterlassen \u2014 KEIN Fallen.",
+            "Unten ankommen, wieder hochstellen, n\u00e4chste Wdh."
+          ],
+          tips: [
+            "Je langsamer das Herunterlassen, desto besser der Trainingseffekt.",
+            "Wenn 3\u00d7 5 Wdh mit 5 Sek Negativphase m\u00f6glich sind \u2192 echte Klimmz\u00fcge testen.",
+            "Schultern unten halten \u2014 nicht hochziehen lassen."
+          ]
+        }
+      },
+      {
+        name: "Kurzhantel-Rudern (einarmig, schwerer)",
+        target: "Latissimus \u00b7 oberer R\u00fccken \u00b7 Masse",
+        prescription: ["4 S\u00e4tze", "8\u201312 Wdh", "je Seite"],
+        sets: 4, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Heute 4 S\u00e4tze statt 3 \u2014 Pull-Schwerpunkttag. Versuche etwas mehr Gewicht als Tag 1.",
+        info: {
+          target: "Latissimus \u00b7 Rhomboiden \u00b7 hinterer Delta",
+          steps: [
+            "Linkes Knie und linke Hand auf Bank oder Stuhl \u2014 R\u00fccken parallel zum Boden.",
+            "Kurzhantel in der rechten Hand, Arm gestreckt nach unten.",
+            "Hantel zur H\u00fcfte ziehen, Ellbogen nah am K\u00f6rper.",
+            "Oben kurz halten, Schulterblatt nach hinten unten.",
+            "Kontrolliert wieder senken. Alle Wdh., dann Seite wechseln."
+          ],
+          tips: [
+            "Den R\u00fccken IMMER gerade halten \u2014 kein Rundr\u00fccken.",
+            "Die Bewegung kommt aus dem R\u00fccken, nicht aus dem Arm.",
+            "Heute bewusst schwerer als Tag 1 anstreben."
+          ]
+        }
+      },
+      {
+        name: "Kurzhantel-Curls",
+        target: "Bizeps",
+        prescription: ["3 S\u00e4tze", "10\u201312 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Beide Arme gleichzeitig oder im Wechsel. Ellbogen am K\u00f6rper fixiert \u2014 kein Schwingen.",
+        info: {
+          target: "Bizeps \u00b7 Unterarme",
+          steps: [
+            "Aufrecht stehen, Kurzhanteln in den H\u00e4nden, Handfl\u00e4chen nach vorne.",
+            "Ellbogen eng am K\u00f6rper, nicht nach vorne wandern lassen.",
+            "Hanteln zu den Schultern f\u00fchren \u2014 kontrolliert.",
+            "Oben kurz anspannen.",
+            "Kontrolliert (2 Sek) wieder ablassen \u2014 nicht fallen lassen."
+          ],
+          tips: [
+            "Kein 'Schwingen' aus dem Rumpf.",
+            "Negative Phase ist genauso wichtig wie das Hochheben.",
+            "Wenn du schwingst \u2192 Gewicht zu schwer."
+          ]
+        }
+      },
+      {
+        name: "Liegest\u00fctz",
+        target: "Brust \u00b7 Schulter \u00b7 Core",
+        prescription: ["3 S\u00e4tze", "8\u201315 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "\u2014",
+        hint: "Push-Erg\u00e4nzung nach dem Pull-Fokus. Falls zu leicht: langsamere Negativphase (3 Sek runter).",
+        info: {
+          target: "Brust \u00b7 vordere Schulter \u00b7 Trizeps \u00b7 Core",
+          steps: [
+            "Plank-Position, H\u00e4nde schulterbreit unter den Schultern.",
+            "K\u00f6rper bildet eine gerade Linie von Kopf bis Fu\u00df.",
+            "Kontrolliert absenken bis Brust knapp \u00fcber dem Boden (2 Sek).",
+            "Ellbogen ca. 45\u00b0 zum K\u00f6rper, nicht weit ausgestellt.",
+            "Kraftvoll nach oben dr\u00fccken, Bauch & Po angespannt."
+          ],
+          tips: [
+            "H\u00fcfte nicht durchh\u00e4ngen lassen \u2014 Core anspannen!",
+            "Lieber 5 saubere als 15 schlampige Wdh.",
+            "Variationen: H\u00e4nde erh\u00f6ht (leichter), F\u00fc\u00dfe erh\u00f6ht (schwerer)."
+          ]
+        }
+      }
+    ]
+  },
+  4: {
+    name: "Tag 4 \u2014 Unterk\u00f6rper B",
+    short: "Beine \u00b7 einseitige Kraft \u00b7 Core",
+    intro: "Zweiter Bein-Tag mit variierten \u00dcbungen. Ausfallschritte r\u00fcckw\u00e4rts und einbeiniges Kreuzheben schulen Balance und einseitige Kraft \u2014 <strong>im Alltag wichtiger als beidseitige Bewegungen</strong>. Ruhiger und kontrollierter als Tag 2.",
+    exercises: [
+      {
+        name: "Goblet Squats (tiefe Variante)",
+        target: "Beine \u00b7 Po \u00b7 Mobilit\u00e4t",
+        prescription: ["3 S\u00e4tze", "10\u201312 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Heute tiefer als Tag 2 anstreben \u2014 Mobilit\u00e4t als Ziel. Langsamere Bewegung (3 Sek runter).",
+        info: {
+          target: "Quadrizeps \u00b7 Po \u00b7 Mobilit\u00e4t",
+          steps: [
+            "Eine Kurzhantel senkrecht vor der Brust halten.",
+            "Breiter Stand, Zehen deutlicher nach au\u00dfen als Tag 2.",
+            "Sehr langsam (3 Sek) tief nach unten \u2014 so weit wie m\u00f6glich.",
+            "Unten kurz halten, dann kraftvoll hochdr\u00fccken.",
+            "Kontrollierte Bewegung \u2014 nicht springen."
+          ],
+          tips: [
+            "Das Ziel ist heute Tiefe und Mobilit\u00e4t, nicht schweres Gewicht.",
+            "Knie verfolgen die Zehen \u2014 nicht nach innen kippen.",
+            "Bei Knie-Schmerzen: weniger tief, mit Ferse auf kleiner Erhebung."
+          ]
+        }
+      },
+      {
+        name: "Ausfallschritte r\u00fcckw\u00e4rts",
+        target: "Beine \u00b7 Balance \u00b7 Knie-Schonung",
+        prescription: ["3 S\u00e4tze", "8\u201310 Wdh", "je Seite"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Schonender f\u00fcr die Knie als Vorw\u00e4rts-Ausfallschritte. Anderes Bewegungsmuster, andere Balance-Anforderung.",
+        info: {
+          target: "Quadrizeps \u00b7 Po \u00b7 Balance",
+          steps: [
+            "Aufrecht stehen, evtl. Kurzhanteln seitlich.",
+            "Einen gro\u00dfen Schritt nach hinten mit einem Bein.",
+            "Hinteres Knie senkt sich Richtung Boden, vorderes bleibt senkrecht.",
+            "Vorderer Oberschenkel wird parallel zum Boden.",
+            "Aus der vorderen Ferse zur\u00fcckdr\u00fccken in die Startposition."
+          ],
+          tips: [
+            "Oberk\u00f6rper bleibt aufrecht \u2014 nicht nach vorne kippen.",
+            "R\u00fcckw\u00e4rts ist weniger koordinativ als vorw\u00e4rts \u2014 ruhiger werden.",
+            "Wand als Gleichgewichtshilfe erlaubt."
+          ]
+        }
+      },
+      {
+        name: "Einbeiniges Kreuzheben",
+        target: "hintere Kette \u00b7 Balance \u00b7 unterer R\u00fccken",
+        prescription: ["3 S\u00e4tze", "8\u201310 Wdh", "je Seite"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Herausfordernder als beidseits. Leichtes Gewicht, Balance hat Vorrang. Eine Kurzhantel in der Gegenhand.",
+        info: {
+          target: "Beinbeuger \u00b7 Po \u00b7 Balance \u00b7 unterer R\u00fccken",
+          steps: [
+            "Auf einem Bein stehen, leichte Beugung im Standbein.",
+            "Kurzhantel in der Gegenhand (rechtes Standbein \u2192 linke Hand).",
+            "H\u00fcfte nach hinten-oben schieben, Oberk\u00f6rper neigt nach vorne.",
+            "R\u00fccken streng gerade, freies Bein geht nach hinten-oben.",
+            "H\u00fcfte wieder nach vorne dr\u00fccken zur Startposition."
+          ],
+          tips: [
+            "Balance zuerst \u2014 Gewicht ist sekund\u00e4r.",
+            "Blick auf einen fixen Punkt auf dem Boden.",
+            "Wer stark wackelt: erst ohne Gewicht oder an einer Wand."
+          ]
+        }
+      },
+      {
+        name: "Dead Bug",
+        target: "Core \u00b7 Wirbels\u00e4ulen-Stabilit\u00e4t",
+        prescription: ["3 S\u00e4tze", "8 Wdh", "je Seite"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "\u2014",
+        hint: "Langsam und kontrolliert. R\u00fccken muss den ganzen Satz flach am Boden bleiben.",
+        info: {
+          target: "tiefe Bauchmuskeln \u00b7 unterer R\u00fccken \u00b7 H\u00fcftbeuger",
+          steps: [
+            "Auf dem R\u00fccken liegen, Arme senkrecht nach oben, Beine in der Luft (90\u00b0).",
+            "Lendenwirbels\u00e4ule flach an den Boden dr\u00fccken \u2014 bleibt da.",
+            "Rechten Arm nach hinten oben und linkes Bein nach vorne unten strecken.",
+            "Kurz vor dem Boden stoppen, langsam zur\u00fcck.",
+            "Seite wechseln \u2014 langsam und kontrolliert."
+          ],
+          tips: [
+            "Wenn der R\u00fccken sich vom Boden hebt \u2192 Bewegungsumfang verkleinern.",
+            "Sehr langsam: 3 Sek raus, 2 Sek zur\u00fcck.",
+            "Diese \u00dcbung ist schwieriger als sie aussieht \u2014 lieber weniger Wdh sauber."
+          ]
+        }
+      },
+      {
+        name: "Wade (Calf Raises)",
+        target: "Wade \u00b7 Sehnen",
+        prescription: ["3 S\u00e4tze", "15\u201320 Wdh"],
+        sets: 3, repsLabel: "Wdh", weightLabel: "kg",
+        hint: "Auf einer Treppenstufe f\u00fcr volle Bewegungsfreiheit. Langsam nach unten \u2014 Wade wird gedehnt.",
+        info: {
+          target: "Wadenmuskel \u00b7 Achillessehne",
+          steps: [
+            "Auf den Zehenspitzen einer Treppenstufe stehen, Fersen \u00fcber dem Rand.",
+            "Kurzhanteln seitlich oder eine Hand an der Wand.",
+            "Fersen so tief wie m\u00f6glich absenken (Dehnung).",
+            "Kraftvoll auf die Zehenspitzen hochdr\u00fccken.",
+            "Oben 1 Sek halten, langsam (2 Sek) wieder absenken."
+          ],
+          tips: [
+            "Volle Bewegungsfreiheit ist wichtiger als Gewicht.",
+            "Gut f\u00fcr die Achillessehnen \u2014 oft vernachl\u00e4ssigt.",
+            "Einbeinig = intensiver, aber erst wenn beidseitig leicht f\u00e4llt."
           ]
         }
       }
@@ -1012,7 +1213,7 @@ function getCurrentWeekNumber() {
   return weeks.size;
 }
 function getStreak() {
-  // Aufeinanderfolgende Wochen mit >=3 Sessions, ab letzter abgeschlossener Woche
+  // Aufeinanderfolgende Wochen mit >=4 Sessions, ab letzter abgeschlossener Woche
   if (state.sessions.length === 0) return 0;
   let streak = 0;
   let cursor = getWeekStart();
@@ -1023,7 +1224,7 @@ function getStreak() {
       const d = new Date(s.date);
       return d >= cursor && d < weekEnd;
     }).length;
-    if (count >= 3) {
+    if (count >= 4) {
       streak++;
       cursor.setDate(cursor.getDate() - 7);
     } else {
@@ -1052,7 +1253,7 @@ function renderHome() {
 
   // Stats
   document.getElementById('statSessions').textContent = state.sessions.length;
-  document.getElementById('statWeek').textContent = `${doneDays.size}/3`;
+  document.getElementById('statWeek').textContent = `${doneDays.size}/4`;
   let totalSets = 0;
   state.sessions.forEach(s => {
     Object.values(s.data || {}).forEach(ex => {
@@ -1067,7 +1268,7 @@ function renderHome() {
   // Days
   const grid = document.getElementById('dayGrid');
   grid.innerHTML = '';
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const day = PLAN[i];
     const done = doneDays.has(i);
     const card = document.createElement('div');
@@ -1174,6 +1375,7 @@ function openWorkout(dayNum) {
           <div class="exercise-target">${ex.target}</div>
         </div>
         <button class="info-btn" onclick="openModal(${dayNum}, ${exIdx})">ⓘ</button>
+        <button class="hist-btn" onclick="openExHistory(${dayNum}, ${exIdx})" title="Verlauf">📊</button>
       </div>
       <div class="exercise-prescription">${pills}</div>
       ${ex.hint ? `<div style="padding: 0 16px 12px 56px; font-size: 12px; color: var(--text-dim); line-height:1.5;">${ex.hint}</div>` : ''}
@@ -1257,9 +1459,191 @@ function closeModal() {
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') closeModal();
 });
+// ================= ÜBUNGS-VERLAUF =================
+function openExHistory(dayNum, exIdx) {
+  const ex = PLAN[dayNum].exercises[exIdx];
+
+  const allSessions = state.sessions
+    .filter(s => s.day === dayNum && s.data && s.data[exIdx])
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // Bestwerte
+  let maxWeight = 0, maxReps = 0;
+  allSessions.forEach(s => {
+    const d = s.data[exIdx];
+    if (!d) return;
+    Object.values(d).forEach(set => {
+      if (set.weight && set.weight > maxWeight) maxWeight = set.weight;
+      if (set.reps   && set.reps   > maxReps)   maxReps   = set.reps;
+    });
+  });
+
+  const recent = allSessions.slice(-5).reverse(); // neueste zuerst
+  let html = '';
+
+  if (recent.length === 0) {
+    html = '<div style="text-align:center;padding:24px 0;color:var(--text-mute);font-size:14px;">Noch keine Einträge für diese Übung.</div>';
+  } else {
+    // Bestwert-Badges
+    if (maxWeight > 0 || maxReps > 0) {
+      html += '<div class="ex-hist-pb">';
+      if (maxWeight > 0) html += `<div class="pb-item"><span class="pb-label">Bestgewicht</span><span class="pb-value">${maxWeight} kg</span></div>`;
+      if (maxReps   > 0) html += `<div class="pb-item"><span class="pb-label">Beste ${ex.repsLabel}</span><span class="pb-value">${maxReps}</span></div>`;
+      html += '</div>';
+    }
+    // Sitzungs-Einträge
+    html += '<div class="ex-hist-table">';
+    recent.forEach(s => {
+      const dateStr = new Date(s.date).toLocaleDateString('de-DE', { day:'2-digit', month:'short', year:'2-digit' });
+      const d = s.data[exIdx];
+      const sets = Object.values(d || {}).filter(st => st.done !== false);
+      html += `<div class="ex-hist-row">`;
+      html += `<div class="ex-hist-date">${dateStr}</div>`;
+      html += `<div class="ex-hist-sets">`;
+      if (!sets.length) {
+        html += '<span style="color:var(--text-mute);font-size:12px;">—</span>';
+      } else {
+        sets.forEach(st => {
+          let label, isPb = false;
+          if (ex.weightLabel === '—') {
+            label = st.reps ? `${st.reps} ${ex.repsLabel}` : '✓';
+            isPb = st.reps === maxReps && maxReps > 0;
+          } else {
+            const w = st.weight != null ? st.weight : '?';
+            const r = st.reps   != null ? `×${st.reps}` : '';
+            label = w + r;
+            isPb = st.weight === maxWeight && maxWeight > 0;
+          }
+          html += `<span class="ex-hist-set${isPb ? ' is-pb' : ''}">${label}</span>`;
+        });
+      }
+      html += `</div></div>`;
+    });
+    if (allSessions.length > 5) {
+      html += `<div class="hist-more">Letzte 5 von ${allSessions.length} Einträgen</div>`;
+    }
+    html += '</div>';
+  }
+
+  document.getElementById('exHistTitle').textContent   = ex.name;
+  document.getElementById('exHistTarget').textContent  = ex.target;
+  document.getElementById('exHistContent').innerHTML   = html;
+  document.getElementById('exHistModal').classList.add('open');
+}
+
+function closeExHist() {
+  document.getElementById('exHistModal').classList.remove('open');
+}
+document.getElementById('exHistModal').addEventListener('click', e => {
+  if (e.target.id === 'exHistModal') closeExHist();
+});
+
+function renderExSelector() {
+  const section = document.getElementById('exSelectorSection');
+  if (!section) return;
+
+  let opts = '<option value="">— Übung wählen —</option>';
+  for (let d = 1; d <= 4; d++) {
+    opts += `<optgroup label="${PLAN[d].name}">`;
+    PLAN[d].exercises.forEach((ex, i) => {
+      opts += `<option value="${d}_${i}">${ex.name}</option>`;
+    });
+    opts += '</optgroup>';
+  }
+
+  section.innerHTML = `
+    <div class="section-head" style="margin-top:28px;"><h2>Übungs-Verlauf</h2></div>
+    <select class="ex-select" id="exSelect" onchange="renderExTable()">
+      ${opts}
+    </select>
+    <div id="exTableContainer" style="margin-top:14px;"></div>
+  `;
+}
+
+function renderExTable() {
+  const val = document.getElementById('exSelect').value;
+  const container = document.getElementById('exTableContainer');
+  if (!val) { container.innerHTML = ''; return; }
+
+  const [dayNum, exIdx] = val.split('_').map(Number);
+  const ex = PLAN[dayNum].exercises[exIdx];
+
+  const sessions = state.sessions
+    .filter(s => s.day === dayNum && s.data && s.data[exIdx])
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (!sessions.length) {
+    container.innerHTML = '<div class="empty-state">Noch keine Einträge für diese Übung.</div>';
+    return;
+  }
+
+  // Bestwerte
+  let maxWeight = 0, maxReps = 0;
+  sessions.forEach(s => {
+    Object.values(s.data[exIdx] || {}).forEach(set => {
+      if (set.weight && set.weight > maxWeight) maxWeight = set.weight;
+      if (set.reps   && set.reps   > maxReps)   maxReps   = set.reps;
+    });
+  });
+
+  const shown = sessions.slice(-8);
+  const maxSetCount = Math.max(...shown.map(s => Object.keys(s.data[exIdx] || {}).length));
+
+  let html = '';
+
+  // Bestwert-Badges
+  if (maxWeight > 0 || maxReps > 0) {
+    html += '<div class="ex-hist-pb">';
+    if (maxWeight > 0) html += `<div class="pb-item"><span class="pb-label">Bestgewicht</span><span class="pb-value">${maxWeight} kg</span></div>`;
+    if (maxReps   > 0) html += `<div class="pb-item"><span class="pb-label">Beste ${ex.repsLabel}</span><span class="pb-value">${maxReps}</span></div>`;
+    html += '</div>';
+  }
+
+  // Tabelle
+  html += '<div class="week-card" style="overflow-x:auto;padding:0;">';
+  html += '<table class="hist-table">';
+  html += '<thead><tr><th>Datum</th>';
+  for (let i = 0; i < maxSetCount; i++) html += `<th class="center">S${i+1}</th>`;
+  html += '</tr></thead><tbody>';
+
+  shown.forEach((s, rowIdx) => {
+    const isLatest = rowIdx === shown.length - 1;
+    const dateStr = new Date(s.date).toLocaleDateString('de-DE', { day:'2-digit', month:'short', year:'2-digit' });
+    html += `<tr${isLatest ? ' class="latest-row"' : ''}>`;
+    html += `<td class="date-cell">${dateStr}</td>`;
+
+    for (let i = 0; i < maxSetCount; i++) {
+      const set = (s.data[exIdx] || {})[i];
+      if (!set) { html += '<td class="set-cell" style="color:var(--text-mute)">—</td>'; continue; }
+
+      let label, isPb = false;
+      if (ex.weightLabel === '—') {
+        label = set.reps ? `${set.reps} ${ex.repsLabel}` : '✓';
+        isPb = set.reps === maxReps && maxReps > 0;
+      } else {
+        const w = set.weight != null ? set.weight : '?';
+        const r = set.reps   != null ? `×${set.reps}` : '';
+        label = w + r;
+        isPb = set.weight === maxWeight && maxWeight > 0;
+      }
+      html += `<td class="${isPb ? 'pb-cell' : 'set-cell'}">${label}</td>`;
+    }
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  if (sessions.length > 8) {
+    html += `<div class="hist-more">Letzte 8 von ${sessions.length} Einträgen</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+
 
 // ================= PROGRESS =================
 function renderProgress() {
+  renderExSelector();
   document.getElementById('pStatSessions').textContent = state.sessions.length;
   document.getElementById('pStatWeeks').textContent = getCurrentWeekNumber();
   document.getElementById('pStatStreak').textContent = getStreak();
@@ -1289,12 +1673,13 @@ function renderProgress() {
     card.innerHTML = `
       <div class="week-head">
         <div class="week-title">Woche ab ${dateStr}</div>
-        <div class="week-count">${w.days.size}/3</div>
+        <div class="week-count">${w.days.size}/4</div>
       </div>
       <div class="week-dots">
         <div class="week-dot ${w.days.has(1) ? 'done' : ''}"></div>
         <div class="week-dot ${w.days.has(2) ? 'done' : ''}"></div>
         <div class="week-dot ${w.days.has(3) ? 'done' : ''}"></div>
+        <div class="week-dot ${w.days.has(4) ? 'done' : ''}"></div>
       </div>
     `;
     list.appendChild(card);
