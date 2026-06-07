@@ -1,5 +1,5 @@
 // Service Worker — Eisen & Wille PWA
-const CACHE_NAME = 'eisenwille-v1';
+const CACHE_NAME = 'eisenwille-v2';
 const ASSETS = [
   './',
   './index.html',

@@ -1,7 +1,7 @@
 {
   "name": "Eisen & Wille — Trainingsplan",
   "short_name": "Eisen & Wille",
-  "description": "Persönlicher Muskelaufbau-Trainingsplan: 3er-Split mit Klimmzug-Progression, Fortschritts-Tracking und Übungsanleitungen.",
+  "description": "Persönlicher Muskelaufbau-Trainingsplan: 4er-Split (Ober-/Unterkörper) mit progressiver Überlastung, Fortschritts-Tracking und Übungsanleitungen.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
